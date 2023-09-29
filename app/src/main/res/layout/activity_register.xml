@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#111111"
+    tools:context=".RegisterLoginAcitivties.RegisterActivity">
+
+    <ImageView
+        android:id="@+id/img_Logo"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/umovie_logo" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtEmail_reg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/Email"
+        app:errorEnabled="true"
+        app:layout_constraintBottom_toTopOf="@+id/txtPassword_reg"
+        app:layout_constraintTop_toBottomOf="@+id/img_Logo">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtemail_reg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtPassword_reg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/Password"
+        app:endIconMode="password_toggle"
+        app:layout_constraintBottom_toTopOf="@+id/txtConfirmPassword_reg"
+        app:layout_constraintTop_toBottomOf="@+id/txtEmail_reg">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtpassword_reg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtConfirmPassword_reg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/Confirmpassword"
+        app:endIconMode="password_toggle"
+        app:layout_constraintBottom_toTopOf="@+id/txtUserName_reg"
+        app:layout_constraintTop_toBottomOf="@+id/txtPassword_reg">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtconfirmpassword_reg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:textColor="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtUserName_reg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/Username"
+        app:errorEnabled="true"
+        app:layout_constraintBottom_toTopOf="@+id/elevatedButton_register"
+        app:layout_constraintTop_toBottomOf="@+id/txtConfirmPassword_reg">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/txtusername_reg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/elevatedButton_register"
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Register"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtUserName_reg"
+        tools:layout_editor_absoluteX="155dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>
