@@ -20,9 +20,14 @@
         android:id="@+id/txtEmail_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/Email"
+        app:layout_constraintBottom_toTopOf="@+id/txtPassword_Login"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_Logo">
 
@@ -38,10 +43,15 @@
         android:id="@+id/txtPassword_Login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/Password"
         app:endIconMode="password_toggle"
+        app:layout_constraintBottom_toTopOf="@+id/elevatedButton_login"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail_login">
 
@@ -59,22 +69,27 @@
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/Login"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtPassword_Login" />
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/btnSignInWithGoogle"-->
-<!--        android:layout_width="97dp"-->
-<!--        android:layout_height="82dp"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        android:contentDescription="Sign In with Google"-->
-<!--        android:src="@drawable/google_signin_button"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/elevatedButton_login" />-->
+    <!--    <ImageButton-->
+    <!--        android:id="@+id/btnSignInWithGoogle"-->
+    <!--        android:layout_width="97dp"-->
+    <!--        android:layout_height="82dp"-->
+    <!--        android:background="@android:color/transparent"-->
+    <!--        android:contentDescription="Sign In with Google"-->
+    <!--        android:src="@drawable/google_signin_button"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toEndOf="parent"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/elevatedButton_login" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

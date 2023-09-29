@@ -20,9 +20,15 @@
         android:id="@+id/txtEmail_reg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/Email"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@+id/txtPassword_reg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/img_Logo">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -37,9 +43,15 @@
         android:id="@+id/txtPassword_reg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/Password"
         app:endIconMode="password_toggle"
         app:layout_constraintBottom_toTopOf="@+id/txtConfirmPassword_reg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtEmail_reg">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -55,9 +67,15 @@
         android:id="@+id/txtConfirmPassword_reg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/Confirmpassword"
         app:endIconMode="password_toggle"
         app:layout_constraintBottom_toTopOf="@+id/txtUserName_reg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtPassword_reg">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -73,9 +91,15 @@
         android:id="@+id/txtUserName_reg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:hint="@string/Username"
         app:errorEnabled="true"
         app:layout_constraintBottom_toTopOf="@+id/elevatedButton_register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtConfirmPassword_reg">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -91,8 +115,13 @@
         style="@style/Widget.Material3.Button.ElevatedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="64dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/Register"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtUserName_reg"
-        tools:layout_editor_absoluteX="155dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtUserName_reg" />
 </androidx.constraintlayout.widget.ConstraintLayout>
