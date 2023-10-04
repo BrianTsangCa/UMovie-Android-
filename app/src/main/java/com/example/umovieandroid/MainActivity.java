@@ -95,5 +95,41 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(jsonObjectRequest);
+        url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=Action";
+        JsonObjectRequest jsonObjectRequest2 = new JsonObjectRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray results = response.getJSONArray("results");
+                            for (int i = 0; i < results.length(); i++) {
+                                JSONObject Data = results.getJSONObject(i);
+                                imglist.add(Data.getString("poster_path"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        heroAdapter = new HeroAdapter(MainActivity.this, imglist);
+                        carousel_recycler_view.setAdapter(heroAdapter);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d("error", "Error: " + error.getMessage());
+                    }
+                }
+
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // Add the Authorization header with the Bearer token
+                headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFlMjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
+                return headers;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
     }
 }
