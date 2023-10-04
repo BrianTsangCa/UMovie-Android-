@@ -26,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     TextInputEditText txtemail_login, txtpassword_login;
     Button elevatedButton_login;
     FirebaseAuth firebaseAuth;
+    final String TAG = "umovie";
 //    FirebaseUser user;
 //    BeginSignInRequest signInRequest;
 //    ImageButton btnSignInWithGoogle;

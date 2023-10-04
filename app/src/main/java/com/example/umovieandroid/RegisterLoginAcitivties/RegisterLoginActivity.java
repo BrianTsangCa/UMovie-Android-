@@ -11,6 +11,7 @@ import com.example.umovieandroid.R;
 
 public class RegisterLoginActivity extends AppCompatActivity {
     Button btn_Register, btn_Login;
+    final String TAG = "umovie";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

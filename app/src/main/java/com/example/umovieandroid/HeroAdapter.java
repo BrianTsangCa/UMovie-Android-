@@ -18,6 +18,7 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
     Context context;
     List<String> imgList;
     final String img = "https://image.tmdb.org/t/p/w500";
+    final String TAG = "umovie";
 
     public HeroAdapter() {
     }
