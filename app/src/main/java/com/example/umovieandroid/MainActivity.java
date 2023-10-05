@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                         JSONObject Data = results.getJSONObject(i);
                         imgList.add(Data.getString("poster_path"));
                     }
-                    txtViewArray[0].setText(genre.get(0));
+                    txtViewArray[0].setText("Action");
                     imglistarray[0] = imgList;
                     adapters[0] = new HeroAdapter(MainActivity.this, imgList);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
