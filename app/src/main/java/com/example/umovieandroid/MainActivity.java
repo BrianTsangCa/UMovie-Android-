@@ -35,11 +35,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    Dictionary<String, Integer> dict = new Hashtable<>();
+
+
     private FirebaseAuth mAuth;
     List<String> imglist = new ArrayList<>();
 
@@ -62,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(@androidx.annotation.NonNull Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
+        dict.put("Action", 28);
+        dict.put("Adventure", 12);
+        dict.put("Crime", 80);
+        dict.put("Documentary", 99);
+        dict.put("Family", 10751);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -116,8 +126,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url = "";
-        url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=Action";
+        String url = "";                                                      
+        url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres="+dict.get("Action");
         jsonObjectRequest1 = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -173,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                             requestQueue.add(jsonObjectRequest1);
                         } else {
                             for (int i = 0; i < genre.size() && i < 5; i++) {
-                                String url2 = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + genre.get(i);
+                                String url2 = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + dict.get(genre.get(i))+"&api_key=c3e94cc397e92a1e27d9c6ba6402aec1";
                                 int index = i;
                                 JsonObjectRequest jsonObjectRequest2 = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
                                     @Override
@@ -265,7 +275,5 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(jsonObjectRequest);
-
-
     }
 }
