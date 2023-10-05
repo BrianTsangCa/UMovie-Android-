@@ -91,8 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 Intent intent = new Intent(RegisterActivity.this, PreferenceActivity.class);
                                 String output = "Registration";
                                 intent.putExtra("status", output);
-
-
+                                intent.putExtra("email",_email);
                                 Map<String, Object> user = new HashMap<>();
                                 user.put("email", _email);
                                 user.put("password", _password);
