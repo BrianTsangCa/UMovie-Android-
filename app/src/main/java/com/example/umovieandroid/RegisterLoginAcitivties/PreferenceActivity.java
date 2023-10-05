@@ -46,8 +46,6 @@ public class PreferenceActivity extends AppCompatActivity {
         List<String> checkedChipGroupEra = new ArrayList<>();
         List<String> checkedChipGroupRating = new ArrayList<>();
         List<String> checkedChipGroupActor = new ArrayList<>();
-
-
         btn_save = findViewById(R.id.btn_save);
         btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
