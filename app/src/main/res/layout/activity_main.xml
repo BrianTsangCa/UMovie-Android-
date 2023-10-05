@@ -31,10 +31,15 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
-                android:backgroundTint="@color/CC111111"
-                app:title="@string/Search"
-                app:titleTextColor="@color/white" />
+                android:background="@color/white">
+
+                <androidx.appcompat.widget.SearchView
+                    android:id="@+id/searchView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/E8F1FA"
+                    tools:layout_editor_absoluteX="16dp" />
+            </androidx.appcompat.widget.Toolbar>
 
             <ImageView
                 android:id="@+id/imageView_logo"
