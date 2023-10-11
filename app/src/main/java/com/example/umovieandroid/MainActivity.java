@@ -26,10 +26,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.umovieandroid.Adapter.HeroAdapter;
+import com.example.umovieandroid.RegisterLoginAcitivties.PreferenceActivity;
+import com.example.umovieandroid.RegisterLoginAcitivties.RegisterActivity;
+import com.example.umovieandroid.RegisterLoginAcitivties.RegisterLoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -48,6 +52,9 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     Dictionary<String, Integer> dict = new Hashtable<>();
+    FirebaseFirestore db = FirebaseFirestore.getInstance();
+    CollectionReference preferencesRef = db.collection("preferences");
+    CollectionReference usersRef = db.collection("users");
 
 
     private FirebaseAuth mAuth;
@@ -62,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     HeroAdapter[] adapters = new HeroAdapter[5];
     final String TAG = "umovie";
     List<String> genre = new ArrayList<>();
-    FirebaseFirestore db = FirebaseFirestore.getInstance();
     TextView txtView0, txtView1, txtView2, txtView3, txtView4;
     RecyclerView carousel_recycler_view, recyclerview0, recyclerview1, recyclerview2, recyclerview3, recyclerview4;
 
@@ -73,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(@androidx.annotation.NonNull Menu menu) {
         getMenuInflater().inflate(R.menu.menu_search, menu);
-        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +87,6 @@ public class MainActivity extends AppCompatActivity {
                 menu.findItem(R.id.profile).setVisible(false);
                 menu.findItem(R.id.favorite).setVisible(false);
                 menu.findItem(R.id.logout).setVisible(false);
-
             }
         });
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
@@ -92,7 +96,6 @@ public class MainActivity extends AppCompatActivity {
                 menu.findItem(R.id.profile).setVisible(true);
                 menu.findItem(R.id.favorite).setVisible(true);
                 menu.findItem(R.id.logout).setVisible(true);
-
                 return false;
             }
         });
@@ -116,17 +119,23 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.profile) {
-            Toast.makeText(MainActivity.this, "Profile Clicked", Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (item.getItemId() == R.id.favorite) {
+        if (item.getItemId() == R.id.favorite) {
             Toast.makeText(MainActivity.this, "Favorite Clicked", Toast.LENGTH_SHORT).show();
             return true;
         } else if (item.getItemId() == R.id.action_search) {
             Toast.makeText(MainActivity.this, "Search Clicked", Toast.LENGTH_SHORT).show();
             return true;
+        } else if (item.getItemId() == R.id.setting) {
+            Intent intent = new Intent(MainActivity.this, PreferenceActivity.class);
+            String output = "Setting";
+            intent.putExtra("status", output);
+            intent.putExtra("email", userEmail);
+            startActivity(intent);
+
         } else if (item.getItemId() == R.id.logout) {
-            Toast.makeText(MainActivity.this, "Search Clicked", Toast.LENGTH_SHORT).show();
+            mAuth.signOut();
+            startActivity(new Intent(this, RegisterLoginActivity.class));
+            finish();
         } else {
             return false;
         }
@@ -317,5 +326,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(jsonObjectRequest);
+    }
+    public void getUserVector(){
+
     }
 }

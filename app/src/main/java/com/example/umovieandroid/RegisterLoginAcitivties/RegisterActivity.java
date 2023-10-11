@@ -86,8 +86,6 @@ public class RegisterActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-
-                                Toast.makeText(RegisterActivity.this, "User is Created!", Toast.LENGTH_LONG).show();
                                 Intent intent = new Intent(RegisterActivity.this, PreferenceActivity.class);
                                 String output = "Registration";
                                 intent.putExtra("status", output);

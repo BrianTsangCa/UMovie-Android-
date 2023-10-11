@@ -7,12 +7,7 @@
         android:title="Search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/profile"
-        android:contentDescription="@string/content_description_profile"
-        android:icon="@drawable/ic_account_circle_24"
-        android:title="@string/content_description_profile"
-        app:showAsAction="always" />
+
     <item
         android:id="@+id/favorite"
         android:contentDescription="@string/content_description_favorite"
@@ -20,10 +15,25 @@
         android:title="@string/content_description_favorite"
         app:showAsAction="always" />
     <item
-        android:id="@+id/logout"
-        android:contentDescription="@string/Logout"
+        android:id="@+id/profile"
+        android:contentDescription="@string/content_description_profile"
         android:icon="@drawable/ic_account_circle_24"
-        android:title="@string/Logout"
-        app:showAsAction="always" />
+        android:title="@string/content_description_profile"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/setting"
+                android:contentDescription="@string/setting"
+                android:icon="@drawable/ic_settings_24"
+                android:title="@string/setting"
+                app:showAsAction="always" />
+            <item
+                android:id="@+id/logout"
+                android:contentDescription="@string/Logout"
+                android:icon="@drawable/ic_logout_24"
+                android:title="@string/Logout"
+                app:showAsAction="always" />
+        </menu>
+    </item>
 
 </menu>
