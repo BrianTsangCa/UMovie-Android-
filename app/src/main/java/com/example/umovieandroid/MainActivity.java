@@ -393,7 +393,6 @@ public class MainActivity extends AppCompatActivity {
                 getEraVector(eraList);
                 getActorVector(actorList);
             }
-
         });
     }
 
