@@ -31,6 +31,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
                 app:subtitleTextColor="@color/white"
                 app:title="          "
                 app:titleTextColor="@color/white" />
