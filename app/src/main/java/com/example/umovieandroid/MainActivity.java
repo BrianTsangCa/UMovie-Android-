@@ -62,10 +62,12 @@ public class MainActivity extends AppCompatActivity {
     List<String> eraList = new ArrayList<>();
     List<String> ratingList = new ArrayList<>();
     List<String> actorList = new ArrayList<>();
+
     private FirebaseAuth mAuth;
     List<String> imglist = new ArrayList<>();
 
     List<String>[] imglistarray = new List[5];
+    List<String> allGenreList = new ArrayList<>();
 
     JsonObjectRequest jsonObjectRequest, jsonObjectRequest1, jsonObjectRequest2;
     RecyclerView[] recyclerViewArray = new RecyclerView[5];
@@ -170,8 +172,25 @@ public class MainActivity extends AppCompatActivity {
         dict.put("Thriller", 53);
         dict.put("War", 10752);
         dict.put("Western", 37);
-
-
+        allGenreList.add("Action");
+        allGenreList.add("Adventure");
+        allGenreList.add("Animation");
+        allGenreList.add("Comedy");
+        allGenreList.add("Crime");
+        allGenreList.add("Documentary");
+        allGenreList.add("Drama");
+        allGenreList.add("Family");
+        allGenreList.add("Fantasy");
+        allGenreList.add("History");
+        allGenreList.add("Horror");
+        allGenreList.add("Music");
+        allGenreList.add("Mystery");
+        allGenreList.add("Romance");
+        allGenreList.add("Science Fiction");
+        allGenreList.add("TV Movie");
+        allGenreList.add("Thriller");
+        allGenreList.add("War");
+        allGenreList.add("Western");
         carousel_recycler_view = findViewById(R.id.carousel_recycler_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -347,6 +366,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(jsonObjectRequest);
+        getUserVector();
+
     }
 
     public void getUserVector() {
@@ -368,8 +389,72 @@ public class MainActivity extends AppCompatActivity {
                         actorList = (List<String>) preferences.get("actor");
                     }
                 }
+                getGenreVector(genreList);
+                getEraVector(eraList);
+                getActorVector(actorList);
             }
 
         });
+    }
+
+    public int[] getGenreVector(List<String> genreList) {
+        int[] output = new int[19];
+        int position = 0;
+        for (String genre : allGenreList) {
+            if (genreList.contains(genre)) {
+                output[position] = 1;
+            } else {
+                output[position] = 0;
+            }
+            position++;
+        }
+        String toast = "";
+        for (int i = 0; i < output.length; i++) {
+            toast += output[i] + " ";
+        }
+        Toast.makeText(this, "Genre vector is :" + toast, Toast.LENGTH_SHORT).show();
+        return output;
+    }
+
+    public int[] getEraVector(List<String> eraList) {
+        int[] output = new int[4];
+        List<String> allEraList = new ArrayList<>();
+        allEraList.add("Golden Age Era (1970- 1989)");
+        allEraList.add("Classic Era (1917-1969)");
+        allEraList.add("Modern Era (1990-2009)");
+        allEraList.add("Contemporary Era (2010-2023)");
+        for (int i = 0; i < allEraList.size(); i++) {
+            if (eraList.contains(allEraList.get(i))) {
+                output[i] = 1;
+            } else {
+                output[i] = 0;
+            }
+        }
+        String toast = "";
+        for (int i = 0; i < output.length; i++) {
+            toast += output[i] + " ";
+        }
+        Toast.makeText(this, "Era vector is :" + toast, Toast.LENGTH_SHORT).show();
+        return output;
+    }
+
+    public int[] getActorVector(List<String> actorList) {
+        int[] output = new int[2];
+        List<String> allActorList = new ArrayList<>();
+        allActorList.add("Denzel Washington");
+        allActorList.add("Jason Statham");
+        for (int i = 0; i < allActorList.size(); i++) {
+            if (actorList.contains(allActorList.get(i))) {
+                output[i] = 1;
+            } else {
+                output[i] = 0;
+            }
+        }
+        String toast = "";
+        for (int i = 0; i < output.length; i++) {
+            toast += output[i] + " ";
+        }
+        Toast.makeText(this, "Actor vector is :" + toast, Toast.LENGTH_SHORT).show();
+        return output;
     }
 }
