@@ -1,14 +1,21 @@
 package com.example.umovieandroid;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.ColorSpace;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,23 +67,35 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView carousel_recycler_view, recyclerview0, recyclerview1, recyclerview2, recyclerview3, recyclerview4;
 
     String userEmail;
+    SearchView searchView;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        dict.put("Action", 28);
-        dict.put("Adventure", 12);
-        dict.put("Crime", 80);
-        dict.put("Documentary", 99);
-        dict.put("Family", 10751);
-        carousel_recycler_view = findViewById(R.id.carousel_recycler_view);
+    public boolean onCreateOptionsMenu(@androidx.annotation.NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchView.setBackgroundColor(Color.WHITE);
+                menu.findItem(R.id.profile).setVisible(false);
+                menu.findItem(R.id.favorite).setVisible(false);
+                menu.findItem(R.id.logout).setVisible(false);
 
+            }
+        });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                searchView.setBackgroundColor(Color.rgb(17, 17, 17));
+                menu.findItem(R.id.profile).setVisible(true);
+                menu.findItem(R.id.favorite).setVisible(true);
+                menu.findItem(R.id.logout).setVisible(true);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        SearchView searchView=findViewById(R.id.searchView);
+                return false;
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -91,7 +110,41 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+        return true;
+    }
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.profile) {
+            Toast.makeText(MainActivity.this, "Profile Clicked", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (item.getItemId() == R.id.favorite) {
+            Toast.makeText(MainActivity.this, "Favorite Clicked", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (item.getItemId() == R.id.action_search) {
+            Toast.makeText(MainActivity.this, "Search Clicked", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (item.getItemId() == R.id.logout) {
+            Toast.makeText(MainActivity.this, "Search Clicked", Toast.LENGTH_SHORT).show();
+        } else {
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        dict.put("Action", 28);
+        dict.put("Adventure", 12);
+        dict.put("Crime", 80);
+        dict.put("Documentary", 99);
+        dict.put("Family", 10751);
+        carousel_recycler_view = findViewById(R.id.carousel_recycler_view);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         txtView0 = findViewById(R.id.txtView0);
         txtView1 = findViewById(R.id.txtView1);
         txtView2 = findViewById(R.id.txtView2);
@@ -115,8 +168,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-        String url = "";                                                      
-        url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres="+dict.get("Action");
+        String url = "";
+        url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + dict.get("Action");
         jsonObjectRequest1 = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -172,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
                             requestQueue.add(jsonObjectRequest1);
                         } else {
                             for (int i = 0; i < genre.size() && i < 5; i++) {
-                                String url2 = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + dict.get(genre.get(i))+"&api_key=c3e94cc397e92a1e27d9c6ba6402aec1";
+                                String url2 = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + dict.get(genre.get(i)) + "&api_key=c3e94cc397e92a1e27d9c6ba6402aec1";
                                 int index = i;
                                 JsonObjectRequest jsonObjectRequest2 = new JsonObjectRequest(Request.Method.GET, url2, null, new Response.Listener<JSONObject>() {
                                     @Override

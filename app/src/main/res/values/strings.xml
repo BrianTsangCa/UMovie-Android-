@@ -40,6 +40,10 @@
     <string name="JasonStatham">Jason Statham</string>
     <string name="Save">Save</string>
     <string name="Search">Search</string>
+    <string name="UMovie">UMovie</string>
+    <string name="content_description_favorite">Favorite</string>
+    <string name="content_description_profile">Profile</string>
+    <string name="Logout">Logout</string>
 
     <!--    <string name="web_client_id">540405413711-bb0h44h78p4aicla5s92k4fb4urq1k0a.apps.googleusercontent.com</string>-->
 </resources>
