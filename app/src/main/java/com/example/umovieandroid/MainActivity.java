@@ -30,7 +30,9 @@ import com.example.umovieandroid.RegisterLoginAcitivties.PreferenceActivity;
 import com.example.umovieandroid.RegisterLoginAcitivties.RegisterActivity;
 import com.example.umovieandroid.RegisterLoginAcitivties.RegisterLoginActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -56,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
     CollectionReference preferencesRef = db.collection("preferences");
     CollectionReference usersRef = db.collection("users");
 
-
+    List<String> genreList = new ArrayList<>();
+    List<String> eraList = new ArrayList<>();
+    List<String> ratingList = new ArrayList<>();
+    List<String> actorList = new ArrayList<>();
     private FirebaseAuth mAuth;
     List<String> imglist = new ArrayList<>();
 
@@ -148,9 +153,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         dict.put("Action", 28);
         dict.put("Adventure", 12);
+        dict.put("Animation", 16);
+        dict.put("Comedy", 35);
         dict.put("Crime", 80);
         dict.put("Documentary", 99);
+        dict.put("Drama", 18);
         dict.put("Family", 10751);
+        dict.put("Fantasy", 14);
+        dict.put("History", 36);
+        dict.put("Horror", 27);
+        dict.put("Music", 10402);
+        dict.put("Mystery", 9648);
+        dict.put("Romance", 10749);
+        dict.put("Science Fiction", 878);
+        dict.put("TV Movie", 10770);
+        dict.put("Thriller", 53);
+        dict.put("War", 10752);
+        dict.put("Western", 37);
+
+
         carousel_recycler_view = findViewById(R.id.carousel_recycler_view);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -327,7 +348,28 @@ public class MainActivity extends AppCompatActivity {
         };
         requestQueue.add(jsonObjectRequest);
     }
-    public void getUserVector(){
 
+    public void getUserVector() {
+        preferencesRef.document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Map<String, Object> preferences = documentSnapshot.getData();
+                    if (preferences != null && preferences.containsKey("genre")) {
+                        genreList = (List<String>) preferences.get("genre");
+                    }
+                    if (preferences != null && preferences.containsKey("era")) {
+                        eraList = (List<String>) preferences.get("era");
+                    }
+                    if (preferences != null && preferences.containsKey("rating")) {
+                        ratingList = (List<String>) preferences.get("rating");
+                    }
+                    if (preferences != null && preferences.containsKey("actor")) {
+                        actorList = (List<String>) preferences.get("actor");
+                    }
+                }
+            }
+
+        });
     }
 }
