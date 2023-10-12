@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.umovieandroid.Model.Movie;
 import com.example.umovieandroid.R;
 import com.squareup.picasso.Picasso;
 
@@ -16,16 +17,16 @@ import java.util.List;
 
 public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
     Context context;
-    List<String> imgList;
+    List<Movie> movieList;
     final String img = "https://image.tmdb.org/t/p/w500";
     final String TAG = "umovie";
 
     public HeroAdapter() {
     }
 
-    public HeroAdapter(Context context, List<String> imgList) {
+    public HeroAdapter(Context context, List<Movie> movieList) {
         this.context = context;
-        this.imgList = imgList;
+        this.movieList = movieList;
     }
 
     @NonNull
@@ -46,12 +47,12 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ImageView imageView = holder.carousel_image_view;
-        Picasso.get().load(img + imgList.get(position)).into(imageView);
+        Picasso.get().load(img + movieList.get(position).getPoster_path()).into(imageView);
     }
 
     @Override
     public int getItemCount() {
-        return imgList.size();
+        return movieList.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

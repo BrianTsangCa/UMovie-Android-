@@ -27,6 +27,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.umovieandroid.Adapter.HeroAdapter;
 import com.example.umovieandroid.LocalDatabase.UMovieDatabase;
+import com.example.umovieandroid.Model.Movie;
 import com.example.umovieandroid.RegisterLoginAcitivties.PreferenceActivity;
 import com.example.umovieandroid.RegisterLoginAcitivties.RegisterActivity;
 import com.example.umovieandroid.RegisterLoginAcitivties.RegisterLoginActivity;
@@ -72,11 +73,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> actorList = new ArrayList<>();
 
     private FirebaseAuth mAuth;
-    List<String> imglist = new ArrayList<>();
-    List<String> genreList_MovieVector = new ArrayList<>();
-    List<String> eraList_MovieVector = new ArrayList<>();
-    List<String> idList_MovieVector = new ArrayList<>();
-    List<String>[] imglistarray = new List[5];
+    List<Movie> movielist = new ArrayList<>();
+    List<Movie>[] movielistarray = new List[5];
     List<String> allGenreList = new ArrayList<>();
 
     JsonObjectRequest jsonObjectRequest, jsonObjectRequest1, jsonObjectRequest2;
@@ -236,14 +234,15 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray results = response.getJSONArray("results");
-                    ArrayList<String> imgList = new ArrayList<>();
+                    List<Movie> movielist = new ArrayList<>();
+
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
-                        imgList.add(Data.getString("poster_path"));
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Double.parseDouble(Data.getString("vote_average")), Double.parseDouble(Data.getString("vote_count")), genreList));
                     }
                     txtViewArray[0].setText("Action");
-                    imglistarray[0] = imgList;
-                    adapters[0] = new HeroAdapter(MainActivity.this, imgList);
+                    movielistarray[0] = movielist;
+                    adapters[0] = new HeroAdapter(MainActivity.this, movielist);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
                     recyclerViewArray[0].setLayoutManager(layoutManager);
                     recyclerview0.setAdapter(adapters[0]);
@@ -293,14 +292,15 @@ public class MainActivity extends AppCompatActivity {
                                     public void onResponse(JSONObject response) {
                                         try {
                                             JSONArray results = response.getJSONArray("results");
-                                            ArrayList<String> imgList = new ArrayList<>();
+                                            List<Movie> movielist = new ArrayList<>();
                                             for (int j = 0; j < results.length(); j++) {
-                                                JSONObject data = results.getJSONObject(j);
-                                                imgList.add(data.getString("poster_path"));
+                                                JSONObject Data = results.getJSONObject(j);
+                                                movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Double.parseDouble(Data.getString("vote_average")), Double.parseDouble(Data.getString("vote_count")), genreList));
+
                                             }
                                             txtViewArray[index].setText(genre.get(index));
-                                            imglistarray[index] = imgList;
-                                            adapters[index] = new HeroAdapter(MainActivity.this, imglistarray[index]);
+                                            movielistarray[index] = movielist;
+                                            adapters[index] = new HeroAdapter(MainActivity.this, movielistarray[index]);
                                             LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
                                             recyclerViewArray[index].setLayoutManager(layoutManager);
                                             recyclerViewArray[index].setAdapter(adapters[index]);
@@ -352,12 +352,14 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray results = response.getJSONArray("results");
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
-                        imglist.add(Data.getString("poster_path"));
+                        List<String> genreList=new ArrayList<>();
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Double.parseDouble(Data.getString("vote_average")), Double.parseDouble(Data.getString("vote_count")), genreList));
                     }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                heroAdapter = new HeroAdapter(MainActivity.this, imglist);
+                heroAdapter = new HeroAdapter(MainActivity.this, movielist);
                 carousel_recycler_view.setAdapter(heroAdapter);
             }
         }, new Response.ErrorListener() {
@@ -445,16 +447,33 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONArray results = response.getJSONArray("results");
                             for (int i = 0; i < results.length(); i++) {
-                                JSONObject Data = results.getJSONObject(i);
-                                genreList_MovieVector.add(Data.getString("genre_ids"));
-                                eraList_MovieVector.add(Data.getString("release_date"));
-                                idList_MovieVector.add(Data.getString("id"));
+//                                JSONObject Data = results.getJSONObject(i);
+//                                List<String> genreListtemp=new ArrayList<>();
+//                                List<String> eraListtemp=new ArrayList<>();
+//                                List<String> genreListtemp=new ArrayList<>();
+//                                genreList_MovieVector.add(Data.getString("genre_ids"));
+//                                eraList_MovieVector.add(Data.getString("release_date"));
+//                                idList_MovieVector.add(Data.getString("id"));
+//                                titleList_MovieVector.add(Data.getString("title"));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        heroAdapter = new HeroAdapter(MainActivity.this, imglist);
-                        carousel_recycler_view.setAdapter(heroAdapter);
+//                        double[] a = getGenreVector(genreList_MovieVector);
+//                        double[] b = getEraVector(eraList_MovieVector);
+//                        double[] c = getActorVector(idList_MovieVector);
+//                        String userVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
+//
+//                        MovieVectorDao movieDao = udb.movieVectorDao();
+//
+//                        ExecutorService executorService = Executors.newSingleThreadExecutor();
+//                        executorService.execute(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                for(int i=0;)
+//                                movieDao.insertMovieVector(new UserVector(userEmail, userVector));
+//                            }
+//                        });
                     }
                 }, new Response.ErrorListener() {
                     @Override
