@@ -1,4 +1,4 @@
-package com.example.umovieandroid.Model;
+package com.example.umovieandroid.Movie.Model;
 
 public class Movie {
     String title;

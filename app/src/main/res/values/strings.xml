@@ -36,11 +36,11 @@
     <string name="Seven">7</string>
     <string name="Eight">8</string>
     <string name="Nine">9</string>
-    <string name="DenzelWashington">Denzel Washington</string>
+    <string name="JackieChan">Jackie Chan</string>
+<!--    id:18897 movie:2109-Rush Hour,5175-Rush Hour 2,5174-Rush Hour 3,-->
     <string name="JasonStatham">Jason Statham</string>
+<!--    id:976 movie:107-Snatch,345940-The Meg,4108-The Transporter,-->
     <string name="Save">Save</string>
-    <string name="Search">Search</string>
-    <string name="UMovie">UMovie</string>
     <string name="content_description_favorite">Favorite</string>
     <string name="content_description_profile">Profile</string>
     <string name="Logout">Logout</string>

@@ -1,4 +1,4 @@
-package com.example.umovieandroid.Model;
+package com.example.umovieandroid.Movie.Model;
 
 import java.util.List;
 

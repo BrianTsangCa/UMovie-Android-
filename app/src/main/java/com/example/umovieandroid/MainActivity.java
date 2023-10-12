@@ -26,9 +26,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.umovieandroid.Adapter.HeroAdapter;
+import com.example.umovieandroid.LocalDatabase.UMovieDatabase;
 import com.example.umovieandroid.RegisterLoginAcitivties.PreferenceActivity;
 import com.example.umovieandroid.RegisterLoginAcitivties.RegisterActivity;
 import com.example.umovieandroid.RegisterLoginAcitivties.RegisterLoginActivity;
+import com.example.umovieandroid.Vector.Dao.MovieVectorDao;
+import com.example.umovieandroid.Vector.Dao.UserVectorDao;
+import com.example.umovieandroid.Vector.Model.UserVector;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -40,6 +44,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import androidx.appcompat.widget.Toolbar;
+import androidx.room.Room;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,8 +56,11 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
+    UMovieDatabase udb;
     Dictionary<String, Integer> dict = new Hashtable<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference preferencesRef = db.collection("preferences");
@@ -65,7 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     List<String> imglist = new ArrayList<>();
-
+    List<String> genreList_MovieVector = new ArrayList<>();
+    List<String> eraList_MovieVector = new ArrayList<>();
+    List<String> idList_MovieVector = new ArrayList<>();
     List<String>[] imglistarray = new List[5];
     List<String> allGenreList = new ArrayList<>();
 
@@ -82,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
     String userEmail;
     SearchView searchView;
 
+    RequestQueue requestQueue;
 
     @Override
     public boolean onCreateOptionsMenu(@androidx.annotation.NonNull Menu menu) {
@@ -214,9 +225,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewArray[2] = recyclerview2;
         recyclerViewArray[3] = recyclerview3;
         recyclerViewArray[4] = recyclerview4;
-
-
-        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        udb = Room.databaseBuilder(
+                        getApplicationContext(), UMovieDatabase.class, "umovie.db")
+                .build();
+        requestQueue = Volley.newRequestQueue(this);
         String url = "";
         url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + dict.get("Action");
         jsonObjectRequest1 = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -389,15 +401,94 @@ public class MainActivity extends AppCompatActivity {
                         actorList = (List<String>) preferences.get("actor");
                     }
                 }
-                getGenreVector(genreList);
-                getEraVector(eraList);
-                getActorVector(actorList);
+
+                double[] a = getGenreVector(genreList);
+                double[] b = getEraVector(eraList);
+                double[] c = getActorVector(actorList);
+                String userVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
+
+                MovieVectorDao movieDao = udb.movieVectorDao();
+                UserVectorDao userDao = udb.userVectorDao();
+
+                ExecutorService executorService = Executors.newSingleThreadExecutor();
+                executorService.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        userDao.insertUserVector(new UserVector(userEmail, userVector));
+                    }
+                });
+
             }
         });
     }
 
-    public int[] getGenreVector(List<String> genreList) {
-        int[] output = new int[19];
+    public void getMovieVector() {
+
+        preferencesRef.document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Map<String, Object> preferences = documentSnapshot.getData();
+                    if (preferences != null && preferences.containsKey("rating")) {
+                        ratingList = (List<String>) preferences.get("rating");
+                    }
+                }
+                String url = "";
+                if (ratingList.size() == 0) {
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc";
+                } else {
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0);
+                }
+                jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray results = response.getJSONArray("results");
+                            for (int i = 0; i < results.length(); i++) {
+                                JSONObject Data = results.getJSONObject(i);
+                                genreList_MovieVector.add(Data.getString("genre_ids"));
+                                eraList_MovieVector.add(Data.getString("release_date"));
+                                idList_MovieVector.add(Data.getString("id"));
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        heroAdapter = new HeroAdapter(MainActivity.this, imglist);
+                        carousel_recycler_view.setAdapter(heroAdapter);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d("error", "Error: " + error.getMessage());
+                    }
+                }
+
+                ) {
+                    @Override
+                    public Map<String, String> getHeaders() {
+                        Map<String, String> headers = new HashMap<>();
+                        // Add the Authorization header with the Bearer token
+                        headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFlMjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
+                        return headers;
+                    }
+                };
+                requestQueue.add(jsonObjectRequest);
+
+            }
+        });
+    }
+
+    public String arrayToString(double[] array) {
+        String output = "";
+        for (int i = 0; i < array.length; i++) {
+            output += array[i] + ",";
+        }
+        return output.substring(0, output.length() - 1);
+    }
+
+    public double[] getGenreVector(List<String> genreList) {
+        double[] output = new double[19];
         int position = 0;
         for (String genre : allGenreList) {
             if (genreList.contains(genre)) {
@@ -415,8 +506,8 @@ public class MainActivity extends AppCompatActivity {
         return output;
     }
 
-    public int[] getEraVector(List<String> eraList) {
-        int[] output = new int[4];
+    public double[] getEraVector(List<String> eraList) {
+        double[] output = new double[4];
         List<String> allEraList = new ArrayList<>();
         allEraList.add("Golden Age Era (1970- 1989)");
         allEraList.add("Classic Era (1917-1969)");
@@ -437,8 +528,8 @@ public class MainActivity extends AppCompatActivity {
         return output;
     }
 
-    public int[] getActorVector(List<String> actorList) {
-        int[] output = new int[2];
+    public double[] getActorVector(List<String> actorList) {
+        double[] output = new double[2];
         List<String> allActorList = new ArrayList<>();
         allActorList.add("Denzel Washington");
         allActorList.add("Jason Statham");
