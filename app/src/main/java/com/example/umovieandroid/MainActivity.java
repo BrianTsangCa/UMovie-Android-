@@ -25,6 +25,7 @@ import com.android.volley.Request;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.umovieandroid.Adapter.CardAdapter;
 import com.example.umovieandroid.Adapter.HeroAdapter;
 import com.example.umovieandroid.LocalDatabase.UMovieDatabase;
 import com.example.umovieandroid.Model.Movie;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView[] recyclerViewArray = new RecyclerView[5];
     TextView[] txtViewArray = new TextView[5];
     HeroAdapter heroAdapter;
-    HeroAdapter[] adapters = new HeroAdapter[5];
+    CardAdapter[] adapters = new CardAdapter[5];
     final String TAG = "umovie";
     List<String> genre = new ArrayList<>();
     TextView txtView0, txtView1, txtView2, txtView3, txtView4;
@@ -238,12 +239,17 @@ public class MainActivity extends AppCompatActivity {
 
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
+                        List<String> genreList=new ArrayList<>();
+                        JSONArray genreArray=Data.getJSONArray("genre_ids");
+                        for(int j=0;j<genreArray.length();j++){
+                            genreList.add(genreArray.getInt(j)+"");
+                        }
                         movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
 
                     }
                     txtViewArray[0].setText("Action");
                     movielistarray[0] = movielist;
-                    adapters[0] = new HeroAdapter(MainActivity.this, movielist);
+                    adapters[0] = new CardAdapter(MainActivity.this, movielist);
                     LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
                     recyclerViewArray[0].setLayoutManager(layoutManager);
                     recyclerview0.setAdapter(adapters[0]);
@@ -296,11 +302,16 @@ public class MainActivity extends AppCompatActivity {
                                             List<Movie> movielist = new ArrayList<>();
                                             for (int j = 0; j < results.length(); j++) {
                                                 JSONObject Data = results.getJSONObject(j);
+                                                List<String> genreList=new ArrayList<>();
+                                                JSONArray genreArray=Data.getJSONArray("genre_ids");
+                                                for(int i=0;i<genreArray.length();i++){
+                                                    genreList.add(genreArray.getInt(i)+"");
+                                                }
                                                 movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
                                             }
                                             txtViewArray[index].setText(genre.get(index));
                                             movielistarray[index] = movielist;
-                                            adapters[index] = new HeroAdapter(MainActivity.this, movielistarray[index]);
+                                            adapters[index] = new CardAdapter(MainActivity.this, movielistarray[index]);
                                             LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
                                             recyclerViewArray[index].setLayoutManager(layoutManager);
                                             recyclerViewArray[index].setAdapter(adapters[index]);
@@ -353,6 +364,10 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
                         List<String> genreList=new ArrayList<>();
+                        JSONArray genreArray=Data.getJSONArray("genre_ids");
+                        for(int j=0;j<genreArray.length();j++){
+                            genreList.add(genreArray.getInt(j)+"");
+                        }
                         movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
                     }
 

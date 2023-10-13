@@ -24,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.umovieandroid.Adapter.CardAdapter;
+import com.example.umovieandroid.Model.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,7 +42,7 @@ public class SearchActivity extends AppCompatActivity {
     RequestQueue requestQueue;
     JsonObjectRequest jsonObjectRequest;
     SearchView searchView;
-    List<String> imgList = new ArrayList<>();
+    List<Movie> movieList = new ArrayList<>();
     boolean flag = true;
 
     @Override
@@ -112,13 +113,18 @@ public class SearchActivity extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray results = response.getJSONArray("results");
-                    imgList.clear();
+                    movieList.clear();
                     for (int j = 0; j < results.length(); j++) {
-                        JSONObject data = results.getJSONObject(j);
-                        imgList.add(data.getString("poster_path"));
+                        JSONObject Data = results.getJSONObject(j);
+                        List<String> genreList=new ArrayList<>();
+                        JSONArray genreArray=Data.getJSONArray("genre_ids");
+                        for(int i=0;i<genreArray.length();i++){
+                            genreList.add(genreArray.getInt(i)+"");
+                        }
+                        movieList.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
                     }
                     recyclerView_searchPage = findViewById(R.id.recyclerView_searchPage);
-                    adapter = new CardAdapter(SearchActivity.this, imgList);
+                    adapter = new CardAdapter(SearchActivity.this, movieList);
                     recyclerView_searchPage.setLayoutManager(new GridLayoutManager(SearchActivity.this, 3));
                     recyclerView_searchPage.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
