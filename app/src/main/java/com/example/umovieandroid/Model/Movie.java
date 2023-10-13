@@ -7,10 +7,13 @@ public class Movie {
     private String title;
     private String overview;
     private String poster_path;
+    public String backdrop_path;
     private String release_date;
+
     private double vote_average;
     private double vote_count;
     private List<String> genreList;
+
 
     public String getId() {
         return id;
@@ -76,7 +79,15 @@ public class Movie {
         this.genreList = genreList;
     }
 
-    public Movie(String id, String title, String overview, String poster_path, String release_date, double vote_average, double vote_count, List<String> genreList) {
+    public String getBackdrop_path() {
+        return backdrop_path;
+    }
+
+    public void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
+    }
+
+    public Movie(String id, String title, String overview, String poster_path, String release_date, double vote_average, double vote_count, List<String> genreList, String backdrop_path) {
         this.id = id;
         this.title = title;
         this.overview = overview;
@@ -85,5 +96,6 @@ public class Movie {
         this.vote_average = vote_average;
         this.vote_count = vote_count;
         this.genreList = genreList;
+        this.backdrop_path=backdrop_path;
     }
 }

@@ -1,6 +1,9 @@
 package com.example.umovieandroid.Adapter;
 
+import static androidx.core.content.ContextCompat.startActivity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +12,11 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.umovieandroid.MainActivity;
 import com.example.umovieandroid.Model.Movie;
+import com.example.umovieandroid.MovieActivity;
 import com.example.umovieandroid.R;
+import com.example.umovieandroid.SearchActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -38,7 +44,13 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent=new Intent(context, MovieActivity.class);
+                intent.putExtra("overview",movieList.get(holder.getAdapterPosition()).getOverview());
+                intent.putExtra("backdrop",movieList.get(holder.getAdapterPosition()).getBackdrop_path());
+                intent.putExtra("title",movieList.get(holder.getAdapterPosition()).getTitle());
+                intent.putExtra("rating",movieList.get(holder.getAdapterPosition()).getVote_average()+"");
+                intent.putExtra("year",movieList.get(holder.getAdapterPosition()).getRelease_date());
+                startActivity(context,intent,null);
             }
         });
         return holder;

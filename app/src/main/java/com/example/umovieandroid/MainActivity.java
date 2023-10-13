@@ -238,7 +238,8 @@ public class MainActivity extends AppCompatActivity {
 
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
-                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Double.parseDouble(Data.getString("vote_average")), Double.parseDouble(Data.getString("vote_count")), genreList));
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
+
                     }
                     txtViewArray[0].setText("Action");
                     movielistarray[0] = movielist;
@@ -295,8 +296,7 @@ public class MainActivity extends AppCompatActivity {
                                             List<Movie> movielist = new ArrayList<>();
                                             for (int j = 0; j < results.length(); j++) {
                                                 JSONObject Data = results.getJSONObject(j);
-                                                movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Double.parseDouble(Data.getString("vote_average")), Double.parseDouble(Data.getString("vote_count")), genreList));
-
+                                                movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
                                             }
                                             txtViewArray[index].setText(genre.get(index));
                                             movielistarray[index] = movielist;
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
                         List<String> genreList=new ArrayList<>();
-                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Double.parseDouble(Data.getString("vote_average")), Double.parseDouble(Data.getString("vote_count")), genreList));
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
                     }
 
                 } catch (JSONException e) {
