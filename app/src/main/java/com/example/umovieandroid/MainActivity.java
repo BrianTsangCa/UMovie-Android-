@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     List<Movie> movielist = new ArrayList<>();
+    List<Movie> movieList_movieVector = new ArrayList<>();
     List<Movie>[] movielistarray = new List[5];
     List<String> allGenreList = new ArrayList<>();
 
@@ -239,12 +240,12 @@ public class MainActivity extends AppCompatActivity {
 
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
-                        List<String> genreList=new ArrayList<>();
-                        JSONArray genreArray=Data.getJSONArray("genre_ids");
-                        for(int j=0;j<genreArray.length();j++){
-                            genreList.add(genreArray.getInt(j)+"");
+                        List<String> genreList = new ArrayList<>();
+                        JSONArray genreArray = Data.getJSONArray("genre_ids");
+                        for (int j = 0; j < genreArray.length(); j++) {
+                            genreList.add(genreArray.getInt(j) + "");
                         }
-                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
 
                     }
                     txtViewArray[0].setText("Action");
@@ -302,12 +303,12 @@ public class MainActivity extends AppCompatActivity {
                                             List<Movie> movielist = new ArrayList<>();
                                             for (int j = 0; j < results.length(); j++) {
                                                 JSONObject Data = results.getJSONObject(j);
-                                                List<String> genreList=new ArrayList<>();
-                                                JSONArray genreArray=Data.getJSONArray("genre_ids");
-                                                for(int i=0;i<genreArray.length();i++){
-                                                    genreList.add(genreArray.getInt(i)+"");
+                                                List<String> genreList = new ArrayList<>();
+                                                JSONArray genreArray = Data.getJSONArray("genre_ids");
+                                                for (int i = 0; i < genreArray.length(); i++) {
+                                                    genreList.add(genreArray.getInt(i) + "");
                                                 }
-                                                movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
+                                                movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
                                             }
                                             txtViewArray[index].setText(genre.get(index));
                                             movielistarray[index] = movielist;
@@ -363,12 +364,12 @@ public class MainActivity extends AppCompatActivity {
                     JSONArray results = response.getJSONArray("results");
                     for (int i = 0; i < results.length(); i++) {
                         JSONObject Data = results.getJSONObject(i);
-                        List<String> genreList=new ArrayList<>();
-                        JSONArray genreArray=Data.getJSONArray("genre_ids");
-                        for(int j=0;j<genreArray.length();j++){
-                            genreList.add(genreArray.getInt(j)+"");
+                        List<String> genreList = new ArrayList<>();
+                        JSONArray genreArray = Data.getJSONArray("genre_ids");
+                        for (int j = 0; j < genreArray.length(); j++) {
+                            genreList.add(genreArray.getInt(j) + "");
                         }
-                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList,Data.getString("backdrop_path")));
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
                     }
 
                 } catch (JSONException e) {
@@ -462,14 +463,14 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             JSONArray results = response.getJSONArray("results");
                             for (int i = 0; i < results.length(); i++) {
-//                                JSONObject Data = results.getJSONObject(i);
-//                                List<String> genreListtemp=new ArrayList<>();
-//                                List<String> eraListtemp=new ArrayList<>();
-//                                List<String> genreListtemp=new ArrayList<>();
-//                                genreList_MovieVector.add(Data.getString("genre_ids"));
-//                                eraList_MovieVector.add(Data.getString("release_date"));
-//                                idList_MovieVector.add(Data.getString("id"));
-//                                titleList_MovieVector.add(Data.getString("title"));
+                                JSONObject Data = results.getJSONObject(i);
+                                List<String> genreListtemp = new ArrayList<>();
+                                JSONArray genreJsonArray = Data.getJSONArray("genre_ids");
+                                for (int j = 0; j < genreJsonArray.length(); j++) {
+                                    genreListtemp.add("Action");
+//                                    genreListtemp.add(dict.get(genreJsonArray.getInt(j)));
+                                }
+                                movieList_movieVector.add(new Movie(Data.getInt("id") + "", Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreListtemp, Data.getString("backdrop_path")));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
