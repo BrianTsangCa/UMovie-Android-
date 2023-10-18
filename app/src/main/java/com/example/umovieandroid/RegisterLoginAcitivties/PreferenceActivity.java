@@ -34,10 +34,10 @@ public class PreferenceActivity extends AppCompatActivity {
     final String TAG = "umovie";
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     private FirebaseAuth mAuth;
-    List<String> genreList=new ArrayList<>();
-    List<String> eraList=new ArrayList<>();
-    List<String> ratingList=new ArrayList<>();
-    List<String> actorList=new ArrayList<>();
+    List<String> genreList = new ArrayList<>();
+    List<String> eraList = new ArrayList<>();
+    List<String> ratingList = new ArrayList<>();
+    List<String> actorList = new ArrayList<>();
 
     ChipGroup chipGroupGenre, chipGroupEra, chipGroupRating, chipGroupActor;
     CollectionReference preferencesRef = db.collection("preferences");
@@ -151,17 +151,17 @@ public class PreferenceActivity extends AppCompatActivity {
                     preferenceCollection.put("actor", checkedChipGroupActor);
 
                     db.collection("preferences").document(userEmail)
-                            .update(preferenceCollection)
+                            .set(preferenceCollection)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot updated with email: " + userEmail);
+                                    Log.d(TAG, "DocumentSnapshot adding with email: " + userEmail);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error updating document", e);
+                                    Log.w(TAG, "Error adding document", e);
                                 }
                             });
                     startActivity(new Intent(PreferenceActivity.this, MainActivity.class));
@@ -201,13 +201,13 @@ public class PreferenceActivity extends AppCompatActivity {
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Log.d(TAG, "DocumentSnapshot added with email: " + userEmail);
+                                    Log.d(TAG, "DocumentSnapshot updating with email: " + userEmail);
                                 }
                             })
                             .addOnFailureListener(new OnFailureListener() {
                                 @Override
                                 public void onFailure(@NonNull Exception e) {
-                                    Log.w(TAG, "Error adding document", e);
+                                    Log.w(TAG, "Error updating document", e);
                                 }
                             });
                     startActivity(new Intent(PreferenceActivity.this, MainActivity.class));
