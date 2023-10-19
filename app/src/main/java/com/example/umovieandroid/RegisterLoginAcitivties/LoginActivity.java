@@ -72,28 +72,5 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-//        btnSignInWithGoogle = findViewById(R.id.btnSignInWithGoogle);
-//        btnSignInWithGoogle.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                BeginSignInRequest signInRequest;
-//                signInRequest = BeginSignInRequest.builder()
-//                        .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-//                                .setSupported(true)
-//                                // Your server's client ID, not your Android client ID.
-//                                .setServerClientId(getString(R.string.web_client_id))
-//                                // Only show accounts previously used to sign in.
-//                                .setFilterByAuthorizedAccounts(true)
-//                                .build()).build();
-//            }
-//        });
-
-
     }
-
-//    public void onStart() {
-//        super.onStart();
-//        // Check if user is signed in (non-null) and update UI accordingly.
-//        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-//    }
 }
