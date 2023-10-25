@@ -2,7 +2,7 @@ package com.example.umovieandroid.Model;
 
 import java.util.List;
 
-public class Movie {
+public class Movie implements Comparable<Movie> {
     private String id;
     private String title;
     private String overview;
@@ -13,7 +13,15 @@ public class Movie {
     private double vote_average;
     private double vote_count;
     private List<String> genreList;
+    private int similarityScores;
 
+    public int getSimilarityScores() {
+        return similarityScores;
+    }
+
+    public void setSimilarityScores(int similarityScores) {
+        this.similarityScores = similarityScores;
+    }
 
     public String getId() {
         return id;
@@ -96,6 +104,13 @@ public class Movie {
         this.vote_average = vote_average;
         this.vote_count = vote_count;
         this.genreList = genreList;
-        this.backdrop_path=backdrop_path;
+        this.backdrop_path = backdrop_path;
+    }
+
+    @Override
+    public int compareTo(Movie movie) {
+        int compareSimilarityScore
+                = ((Movie) movie).getSimilarityScores();
+        return this.similarityScores - compareSimilarityScore;
     }
 }
