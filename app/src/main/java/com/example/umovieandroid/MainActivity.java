@@ -49,6 +49,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -81,10 +83,11 @@ public class MainActivity extends AppCompatActivity {
     TextView[] txtViewArray = new TextView[5];
     HeroAdapter heroAdapter;
     CardAdapter[] adapters = new CardAdapter[5];
+    CardAdapter recommendedAdapter = new CardAdapter();
     final String TAG = "umovie";
     List<String> genre = new ArrayList<>();
     TextView txtView0, txtView1, txtView2, txtView3, txtView4;
-    RecyclerView carousel_recycler_view, recyclerview0, recyclerview1, recyclerview2, recyclerview3, recyclerview4;
+    RecyclerView recyclerviewRecommended, carousel_recycler_view, recyclerview0, recyclerview1, recyclerview2, recyclerview3, recyclerview4;
 
     String userEmail;
     SearchView searchView;
@@ -218,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         txtViewArray[2] = txtView2;
         txtViewArray[3] = txtView3;
         txtViewArray[4] = txtView4;
+        recyclerviewRecommended = findViewById(R.id.recyclerviewRecommended);
         recyclerview0 = findViewById(R.id.recyclerview0);
         recyclerview1 = findViewById(R.id.recyclerview1);
         recyclerview2 = findViewById(R.id.recyclerview2);
@@ -418,7 +422,9 @@ public class MainActivity extends AppCompatActivity {
                 output = calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             }
             similarityScoresList.add(output);
+            movieList_movieVector.get(i).setSimilarityScores((int) (output * 100));
         }
+        Collections.sort(movieList_movieVector);
     }
 
     private double calculateSimilarityScores(String[] x, String[] y) {
@@ -454,7 +460,6 @@ public class MainActivity extends AppCompatActivity {
                         actorList = (List<String>) preferences.get("actor");
                     }
                 }
-
                 double[] a = getGenreVector(genreList);
                 double[] b = getEraVector(eraList);
                 double[] c = getActorVector(actorList);
@@ -487,9 +492,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 String url = "";
                 if (ratingList.size() == 0) {
-                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc";
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_count.gte=10";
                 } else {
-                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0);
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0)+"&vote_count.gte=10";
                 }
                 jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -555,9 +560,11 @@ public class MainActivity extends AppCompatActivity {
                                     calculateSimilarityScores();
                                     generatePersonalizedMovieLists();
                                 }
-
                             }
                         });
+                        recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL, false));
+                        recommendedAdapter = new CardAdapter(MainActivity.this, movieList_movieVector);
+                        recyclerviewRecommended.setAdapter(recommendedAdapter);
                     }
                 }, new Response.ErrorListener() {
                     @Override

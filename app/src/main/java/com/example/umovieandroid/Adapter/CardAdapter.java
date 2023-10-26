@@ -48,6 +48,9 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 intent.putExtra("title", movieList.get(holder.getAdapterPosition()).getTitle());
                 intent.putExtra("rating", movieList.get(holder.getAdapterPosition()).getVote_average() + "");
                 intent.putExtra("year", movieList.get(holder.getAdapterPosition()).getRelease_date());
+                if(movieList.get(holder.getAdapterPosition()).getSimilarityScores()!=-1){
+                    intent.putExtra("score", movieList.get(holder.getAdapterPosition()).getSimilarityScores());
+                }
                 startActivity(context, intent, null);
             }
         });

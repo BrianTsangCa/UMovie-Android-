@@ -13,7 +13,7 @@ public class Movie implements Comparable<Movie> {
     private double vote_average;
     private double vote_count;
     private List<String> genreList;
-    private int similarityScores;
+    private int similarityScores = -1;
 
     public int getSimilarityScores() {
         return similarityScores;
@@ -111,6 +111,6 @@ public class Movie implements Comparable<Movie> {
     public int compareTo(Movie movie) {
         int compareSimilarityScore
                 = ((Movie) movie).getSimilarityScores();
-        return this.similarityScores - compareSimilarityScore;
+        return compareSimilarityScore - this.similarityScores;
     }
 }

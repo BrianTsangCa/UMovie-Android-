@@ -58,6 +58,24 @@
             </androidx.recyclerview.widget.RecyclerView>
 
             <TextView
+                android:id="@+id/txtViewRecommended"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/Recommended"
+                android:textColor="@color/white"
+                android:textSize="24sp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerviewRecommended"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="64dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="com.google.android.material.carousel.CarouselLayoutManager"></androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
                 android:id="@+id/txtView0"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
