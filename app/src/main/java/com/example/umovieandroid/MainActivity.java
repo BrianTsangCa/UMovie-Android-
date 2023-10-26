@@ -418,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
             double output = 0;
             if (userVector.equals("") || movieVector.get(i).equals("")) {
                 output = 0;
+                output = calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             } else {
                 output = calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             }
@@ -494,7 +495,7 @@ public class MainActivity extends AppCompatActivity {
                 if (ratingList.size() == 0) {
                     url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_count.gte=10";
                 } else {
-                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0)+"&vote_count.gte=10";
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0) + "&vote_count.gte=10";
                 }
                 jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -562,7 +563,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this,LinearLayoutManager.HORIZONTAL, false));
+                        recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
                         recommendedAdapter = new CardAdapter(MainActivity.this, movieList_movieVector);
                         recyclerviewRecommended.setAdapter(recommendedAdapter);
                     }
