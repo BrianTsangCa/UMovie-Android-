@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity {
             x2 += Double.parseDouble(x[i]) * Double.parseDouble(x[i]);
             y2 += Double.parseDouble(y[i]) * Double.parseDouble(y[i]);
         }
-        output = x_y / x2 / y2;
+        output = x_y / Math.sqrt(x2) / Math.sqrt(y2);
         return output;
     }
 
