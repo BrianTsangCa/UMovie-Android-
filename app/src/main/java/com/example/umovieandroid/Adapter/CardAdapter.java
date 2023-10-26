@@ -17,6 +17,7 @@ import com.example.umovieandroid.MovieActivity;
 import com.example.umovieandroid.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.Collections;
 import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
@@ -32,7 +33,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         this.context = context;
         this.movieList = movieList;
     }
-
     @NonNull
     @Override
     public CardAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,7 +48,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 intent.putExtra("title", movieList.get(holder.getAdapterPosition()).getTitle());
                 intent.putExtra("rating", movieList.get(holder.getAdapterPosition()).getVote_average() + "");
                 intent.putExtra("year", movieList.get(holder.getAdapterPosition()).getRelease_date());
-                if(movieList.get(holder.getAdapterPosition()).getSimilarityScores()!=-1){
+                if (movieList.get(holder.getAdapterPosition()).getSimilarityScores() != -1) {
                     intent.putExtra("score", movieList.get(holder.getAdapterPosition()).getSimilarityScores());
                 }
                 startActivity(context, intent, null);

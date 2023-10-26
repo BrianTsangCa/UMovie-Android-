@@ -558,14 +558,15 @@ public class MainActivity extends AppCompatActivity {
                             public void run() {
                                 for (int i = 0; i < movieList_movieVector.size(); i++) {
                                     movieDao.insertMovieVector(new MovieVector(movieTitles.get(i), movieVector.get(i)));
-                                    calculateSimilarityScores();
-                                    generatePersonalizedMovieLists();
                                 }
                             }
                         });
                         recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
                         recommendedAdapter = new CardAdapter(MainActivity.this, movieList_movieVector);
                         recyclerviewRecommended.setAdapter(recommendedAdapter);
+                        calculateSimilarityScores();
+                        generatePersonalizedMovieLists();
+                        recommendedAdapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
                     @Override
