@@ -434,9 +434,9 @@ public class MainActivity extends AppCompatActivity {
         double x2 = 0;
         double y2 = 0;
         for (int i = 0; i < x.length; i++) {
-            x_y += Double.parseDouble(x[0]) * Double.parseDouble(y[0]);
-            x2 += Double.parseDouble(x[0]) * Double.parseDouble(x[0]);
-            y2 += Double.parseDouble(y[0]) * Double.parseDouble(y[0]);
+            x_y += Double.parseDouble(x[i]) * Double.parseDouble(y[i]);
+            x2 += Double.parseDouble(x[i]) * Double.parseDouble(x[i]);
+            y2 += Double.parseDouble(y[i]) * Double.parseDouble(y[i]);
         }
         output = x_y / x2 / y2;
         return output;
