@@ -33,8 +33,10 @@ import com.example.umovieandroid.Vector.Dao.UserVectorDao;
 import com.example.umovieandroid.Vector.Model.MovieVector;
 import com.example.umovieandroid.Vector.Model.UserVector;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -65,19 +67,15 @@ public class MainActivity extends AppCompatActivity {
     Dictionary<String, Integer> dict = new Hashtable<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference preferencesRef = db.collection("preferences");
-    CollectionReference usersRef = db.collection("users");
-
     List<String> genreList = new ArrayList<>();
     List<String> eraList = new ArrayList<>();
     List<String> ratingList = new ArrayList<>();
     List<String> actorList = new ArrayList<>();
-
     private FirebaseAuth mAuth;
     List<Movie> movielist = new ArrayList<>();
     List<Movie> movieList_movieVector = new ArrayList<>();
     List<Movie>[] movielistarray = new List[5];
     List<String> allGenreList = new ArrayList<>();
-
     JsonObjectRequest jsonObjectRequest, jsonObjectRequest1, jsonObjectRequest2;
     RecyclerView[] recyclerViewArray = new RecyclerView[5];
     TextView[] txtViewArray = new TextView[5];
@@ -88,10 +86,9 @@ public class MainActivity extends AppCompatActivity {
     List<String> genre = new ArrayList<>();
     TextView txtView0, txtView1, txtView2, txtView3, txtView4;
     RecyclerView recyclerviewRecommended, carousel_recycler_view, recyclerview0, recyclerview1, recyclerview2, recyclerview3, recyclerview4;
-
     String userEmail;
+    FirebaseUser user;
     SearchView searchView;
-
     RequestQueue requestQueue;
     List<String> genreList_MovieVector = new ArrayList<>();
     List<String> eraList_MovieVector = new ArrayList<>();
@@ -170,6 +167,61 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        addDictionary_List();
+        carousel_recycler_view = findViewById(R.id.carousel_recycler_view);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        txtView0 = findViewById(R.id.txtView0);
+        txtView1 = findViewById(R.id.txtView1);
+        txtView2 = findViewById(R.id.txtView2);
+        txtView3 = findViewById(R.id.txtView3);
+        txtView4 = findViewById(R.id.txtView4);
+        txtViewArray[0] = txtView0;
+        txtViewArray[1] = txtView1;
+        txtViewArray[2] = txtView2;
+        txtViewArray[3] = txtView3;
+        txtViewArray[4] = txtView4;
+        recyclerviewRecommended = findViewById(R.id.recyclerviewRecommended);
+        recyclerview0 = findViewById(R.id.recyclerview0);
+        recyclerview1 = findViewById(R.id.recyclerview1);
+        recyclerview2 = findViewById(R.id.recyclerview2);
+        recyclerview3 = findViewById(R.id.recyclerview3);
+        recyclerview4 = findViewById(R.id.recyclerview4);
+        recyclerViewArray[0] = recyclerview0;
+        recyclerViewArray[1] = recyclerview1;
+        recyclerViewArray[2] = recyclerview2;
+        recyclerViewArray[3] = recyclerview3;
+        recyclerViewArray[4] = recyclerview4;
+        udb = Room.databaseBuilder(
+                        getApplicationContext(), UMovieDatabase.class, "umovie.db")
+                .build();
+        requestQueue = Volley.newRequestQueue(this);
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        generateGenreMovieList();
+        generateUserVector_MovieVector();
+
+    }
+
+    private void storeMovieList() {
+        Map<String, Object> preferenceCollection = new HashMap<>();
+        preferenceCollection.put("Movie List", movieList_movieVector);
+        db.collection("Movie List").document(userEmail)
+                .set(preferenceCollection)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot adding with email: " + userEmail);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@androidx.annotation.NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
+    }
+
+    private void addDictionary_List() {
         dict.put("Action", 28);
         dict.put("Adventure", 12);
         dict.put("Animation", 16);
@@ -208,34 +260,54 @@ public class MainActivity extends AppCompatActivity {
         allGenreList.add("Thriller");
         allGenreList.add("War");
         allGenreList.add("Western");
-        carousel_recycler_view = findViewById(R.id.carousel_recycler_view);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        txtView0 = findViewById(R.id.txtView0);
-        txtView1 = findViewById(R.id.txtView1);
-        txtView2 = findViewById(R.id.txtView2);
-        txtView3 = findViewById(R.id.txtView3);
-        txtView4 = findViewById(R.id.txtView4);
-        txtViewArray[0] = txtView0;
-        txtViewArray[1] = txtView1;
-        txtViewArray[2] = txtView2;
-        txtViewArray[3] = txtView3;
-        txtViewArray[4] = txtView4;
-        recyclerviewRecommended = findViewById(R.id.recyclerviewRecommended);
-        recyclerview0 = findViewById(R.id.recyclerview0);
-        recyclerview1 = findViewById(R.id.recyclerview1);
-        recyclerview2 = findViewById(R.id.recyclerview2);
-        recyclerview3 = findViewById(R.id.recyclerview3);
-        recyclerview4 = findViewById(R.id.recyclerview4);
-        recyclerViewArray[0] = recyclerview0;
-        recyclerViewArray[1] = recyclerview1;
-        recyclerViewArray[2] = recyclerview2;
-        recyclerViewArray[3] = recyclerview3;
-        recyclerViewArray[4] = recyclerview4;
-        udb = Room.databaseBuilder(
-                        getApplicationContext(), UMovieDatabase.class, "umovie.db")
-                .build();
-        requestQueue = Volley.newRequestQueue(this);
+    }
+
+    private void generateUserVector_MovieVector() {
+
+        String url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc";
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray results = response.getJSONArray("results");
+                    for (int i = 0; i < results.length(); i++) {
+                        JSONObject Data = results.getJSONObject(i);
+                        List<String> genreList = new ArrayList<>();
+                        JSONArray genreArray = Data.getJSONArray("genre_ids");
+                        for (int j = 0; j < genreArray.length(); j++) {
+                            genreList.add(genreArray.getInt(j) + "");
+                        }
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                heroAdapter = new HeroAdapter(MainActivity.this, movielist);
+                carousel_recycler_view.setAdapter(heroAdapter);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                Log.d("error", "Error: " + error.getMessage());
+            }
+        }
+
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headers = new HashMap<>();
+                // Add the Authorization header with the Bearer token
+                headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFlMjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
+                return headers;
+            }
+        };
+        requestQueue.add(jsonObjectRequest);
+        getUserVector();
+        getMovieVector();
+    }
+
+    private void generateGenreMovieList() {
         String url = "";
         url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&with_genres=" + dict.get("Action");
         jsonObjectRequest1 = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -285,7 +357,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             userEmail = user.getEmail();
         }
@@ -362,48 +433,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc";
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray results = response.getJSONArray("results");
-                    for (int i = 0; i < results.length(); i++) {
-                        JSONObject Data = results.getJSONObject(i);
-                        List<String> genreList = new ArrayList<>();
-                        JSONArray genreArray = Data.getJSONArray("genre_ids");
-                        for (int j = 0; j < genreArray.length(); j++) {
-                            genreList.add(genreArray.getInt(j) + "");
-                        }
-                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                heroAdapter = new HeroAdapter(MainActivity.this, movielist);
-                carousel_recycler_view.setAdapter(heroAdapter);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                Log.d("error", "Error: " + error.getMessage());
-            }
-        }
-
-        ) {
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headers = new HashMap<>();
-                // Add the Authorization header with the Bearer token
-                headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFlMjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
-                return headers;
-            }
-        };
-        requestQueue.add(jsonObjectRequest);
-        getUserVector();
-        getMovieVector();
     }
 
     private void generatePersonalizedMovieLists() {
@@ -426,6 +455,7 @@ public class MainActivity extends AppCompatActivity {
             movieList_movieVector.get(i).setSimilarityScores((int) (output * 100));
         }
         Collections.sort(movieList_movieVector);
+        storeMovieList();
     }
 
     private double calculateSimilarityScores(String[] x, String[] y) {

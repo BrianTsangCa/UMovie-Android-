@@ -47,6 +47,9 @@
     <string name="Logout">Logout</string>
     <string name="setting">Setting</string>
     <string name="Recommended">Recommended</string>
+    <string name="WatchList">Watch List</string>
+    <string name="Dislike">Dislike</string>
+    <string name="Comment">Comment</string>
 
     <!--    <string name="web_client_id">540405413711-bb0h44h78p4aicla5s92k4fb4urq1k0a.apps.googleusercontent.com</string>-->
 </resources>
