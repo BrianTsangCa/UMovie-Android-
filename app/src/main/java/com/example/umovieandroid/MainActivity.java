@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity {
                         for (int j = 0; j < genreArray.length(); j++) {
                             genreList.add(genreArray.getInt(j) + "");
                         }
-                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreList, Data.getString("backdrop_path")));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -324,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
                         for (int j = 0; j < genreArray.length(); j++) {
                             genreList.add(genreArray.getInt(j) + "");
                         }
-                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
+                        movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreList, Data.getString("backdrop_path")));
 
                     }
                     txtViewArray[0].setText("Action");
@@ -386,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
                                                 for (int i = 0; i < genreArray.length(); i++) {
                                                     genreList.add(genreArray.getInt(i) + "");
                                                 }
-                                                movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Double.parseDouble(Data.getString("vote_count")), genreList, Data.getString("backdrop_path")));
+                                                movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreList, Data.getString("backdrop_path")));
                                             }
                                             txtViewArray[index].setText(genre.get(index));
                                             movielistarray[index] = movielist;
@@ -523,9 +523,11 @@ public class MainActivity extends AppCompatActivity {
                 }
                 String url = "";
                 if (ratingList.size() == 0) {
-                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_count.gte=10";
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=" +
+                            "en-US&page=1&sort_by=popularity.desc&vote_count.gte=10";
                 } else {
-                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0) + "&vote_count.gte=10";
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=" +
+                            "en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0) + "&vote_count.gte=10";
                 }
                 jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -539,7 +541,10 @@ public class MainActivity extends AppCompatActivity {
                                 for (int j = 0; j < genreJsonArray.length(); j++) {
                                     genreListtemp.add(getKeyByValue(dict, genreJsonArray.getInt(j)));
                                 }
-                                movieList_movieVector.add(new Movie(Data.getInt("id") + "", Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreListtemp, Data.getString("backdrop_path")));
+                                movieList_movieVector.add(new Movie(Data.getInt("id") + "", Data.getString("title"),
+                                        Data.getString("overview"), Data.getString("poster_path"),
+                                        Data.getString("release_date"), Data.getDouble("vote_average"),
+                                        Data.getDouble("vote_count"), genreListtemp, Data.getString("backdrop_path")));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -591,7 +596,8 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
+                        recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this,
+                                LinearLayoutManager.HORIZONTAL, false));
                         recommendedAdapter = new CardAdapter(MainActivity.this, movieList_movieVector);
                         recyclerviewRecommended.setAdapter(recommendedAdapter);
                         calculateSimilarityScores();
@@ -610,7 +616,9 @@ public class MainActivity extends AppCompatActivity {
                     public Map<String, String> getHeaders() {
                         Map<String, String> headers = new HashMap<>();
                         // Add the Authorization header with the Bearer token
-                        headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFlMjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
+                        headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFl" +
+                                "MjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfc" +
+                                "mVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
                         return headers;
                     }
                 };

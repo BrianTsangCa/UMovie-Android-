@@ -50,6 +50,7 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
                 intent.putExtra("title",movieList.get(holder.getAdapterPosition()).getTitle());
                 intent.putExtra("rating",movieList.get(holder.getAdapterPosition()).getVote_average()+"");
                 intent.putExtra("year",movieList.get(holder.getAdapterPosition()).getRelease_date());
+                intent.putExtra("vote_count", movieList.get(holder.getAdapterPosition()).getVote_count());
                 startActivity(context,intent,null);
             }
         });

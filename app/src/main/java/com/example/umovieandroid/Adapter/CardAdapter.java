@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -33,6 +34,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         this.context = context;
         this.movieList = movieList;
     }
+
     @NonNull
     @Override
     public CardAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -48,6 +50,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 intent.putExtra("title", movieList.get(holder.getAdapterPosition()).getTitle());
                 intent.putExtra("rating", movieList.get(holder.getAdapterPosition()).getVote_average() + "");
                 intent.putExtra("year", movieList.get(holder.getAdapterPosition()).getRelease_date());
+                intent.putExtra("vote_count", movieList.get(holder.getAdapterPosition()).getVote_count());
                 if (movieList.get(holder.getAdapterPosition()).getSimilarityScores() != -1) {
                     intent.putExtra("score", movieList.get(holder.getAdapterPosition()).getSimilarityScores());
                 }

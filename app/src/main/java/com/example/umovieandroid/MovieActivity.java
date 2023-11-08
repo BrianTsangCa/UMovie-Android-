@@ -60,12 +60,13 @@ public class MovieActivity extends AppCompatActivity {
         String backdrop_path = "" + getIntent().getStringExtra("backdrop");
         title = getIntent().getStringExtra("title");
         String rating = getIntent().getStringExtra("rating");
+        double vote_count = getIntent().getDoubleExtra("vote_count", 0);
         String release_date = getIntent().getStringExtra("year");
         int score = getIntent().getIntExtra("score", -1);
         txt_title.setText(title);
         txt_rating.setText("Rating: " + rating);
         if (score != -1) {
-            txt_year.setText(score + " % Matches " + "Year: " + release_date.substring(0, 4));
+            txt_year.setText(score + " % Matches " + "Year: " + release_date.substring(0, 4) + " Vote count:" + vote_count);
         } else {
             txt_year.setText("Year: " + release_date.substring(0, 4));
         }
