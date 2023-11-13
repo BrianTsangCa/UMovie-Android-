@@ -43,6 +43,7 @@ public class MovieActivity extends AppCompatActivity {
     String dislikeList_movieList = "";
     Chip buttonWatchList, button_block;
     String title;
+    String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +55,9 @@ public class MovieActivity extends AppCompatActivity {
         txt_year = findViewById(R.id.txt_year);
         txt_overview = findViewById(R.id.txt_overview);
         imgView_movie_pic = findViewById(R.id.imgView_movie_pic);
-        button_block = findViewById(R.id.buttonWatchList);
+        buttonWatchList = findViewById(R.id.buttonWatchList);
         button_block = findViewById(R.id.button_block);
+        id=getIntent().getStringExtra("id");
         String overview = getIntent().getStringExtra("overview");
         String backdrop_path = "" + getIntent().getStringExtra("backdrop");
         title = getIntent().getStringExtra("title");
@@ -76,7 +78,38 @@ public class MovieActivity extends AppCompatActivity {
             userEmail = user.getEmail();
         }
         getMovieWatch_Dislike_List();
-
+        buttonWatchList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkWhetherMovieIsAddedWatchList()) {
+                    if (watchList_movieList.indexOf("_") == -1) {
+                        watchList_movieList = "";
+                    } else {
+                        String[] temp = watchList_movieList.split("_");
+                        String[] temp2 = new String[temp.length - 1];
+                        int index = 0;
+                        for (int i = 0; i < temp.length; i++) {
+                            if (!temp[i].equals(title+"+"+id)) {
+                                temp2[index] = temp[i];
+                                index++;
+                            }
+                        }
+                        watchList_movieList = String.join("_", temp2);
+                    }
+                    storeMovieWatchList();
+                    checkOnList();
+                } else {
+                    String[] temp = watchList_movieList.split("_");
+                    if (!temp[0].equals("")) {
+                        watchList_movieList = String.join("_", temp) + "_" + title+"+"+id;
+                    } else {
+                        watchList_movieList = title+"+"+id;
+                    }
+                    storeMovieWatchList();
+                    checkOnList();
+                }
+            }
+        });
         button_block.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,7 +121,7 @@ public class MovieActivity extends AppCompatActivity {
                         String[] temp2 = new String[temp.length - 1];
                         int index = 0;
                         for (int i = 0; i < temp.length; i++) {
-                            if (!temp[i].equals(title)) {
+                            if (!temp[i].equals(title+"+"+id)) {
                                 temp2[index] = temp[i];
                                 index++;
                             }
@@ -100,9 +133,9 @@ public class MovieActivity extends AppCompatActivity {
                 } else {
                     String[] temp = dislikeList_movieList.split("_");
                     if (!temp[0].equals("")) {
-                        dislikeList_movieList = String.join("_", temp) + "_" + title;
+                        dislikeList_movieList = String.join("_", temp) + "_" + title+"+"+id;
                     } else {
-                        dislikeList_movieList = title;
+                        dislikeList_movieList = title+"+"+id;
                     }
                     storeMovieDislikeList();
                     checkOnList();
@@ -120,31 +153,21 @@ public class MovieActivity extends AppCompatActivity {
         }
     }
 
-    private int searchForTitle(List<Movie> movieList, String title) {
-        for (int i = 0; i < movieList.size(); i++) {
-            if (movieList.get(i).getTitle().equals("title")) {
-                return i;
+
+    private Boolean checkWhetherMovieIsAddedWatchList() {
+        String[] temp = watchList_movieList.split("_");
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i].equals(title+"+"+id)) {
+                return true;
             }
         }
-        return -1;
+        return false;
     }
 
     private Boolean checkWhetherMovieIsAddedDislikeList() {
         String[] temp = dislikeList_movieList.split("_");
         for (int i = 0; i < temp.length; i++) {
-            if (temp[i].equals(title)) {
-                Toast.makeText(this, "Found!" + temp[i], Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        }
-        Toast.makeText(this, "Not Found!" + temp[0], Toast.LENGTH_SHORT).show();
-        return false;
-    }
-
-    private Boolean checkWhetherMovieIsAddedWatchList() {
-        String[] temp = watchList_movieList.split("_");
-        for (int i = 0; i < temp.length; i++) {
-            if (temp[i].equals(title)) {
+            if (temp[i].equals(title+"+"+id)) {
                 return true;
             }
         }

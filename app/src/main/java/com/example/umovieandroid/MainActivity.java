@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 menu.findItem(R.id.profile).setVisible(true);
                 menu.findItem(R.id.favorite).setVisible(true);
                 menu.findItem(R.id.logout).setVisible(true);
-                return false;
+                return true;
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -141,10 +141,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.favorite) {
-            Toast.makeText(MainActivity.this, "Favorite Clicked", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this,WatchListActivity.class));
             return true;
         } else if (item.getItemId() == R.id.action_search) {
-            Toast.makeText(MainActivity.this, "Search Clicked", Toast.LENGTH_SHORT).show();
             return true;
         } else if (item.getItemId() == R.id.setting) {
             Intent intent = new Intent(MainActivity.this, PreferenceActivity.class);

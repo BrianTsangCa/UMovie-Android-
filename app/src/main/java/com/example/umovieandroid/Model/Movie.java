@@ -95,9 +95,10 @@ public class Movie implements Comparable<Movie> {
         this.backdrop_path = backdrop_path;
     }
 
-    public Movie(String title) {
-        this.title = title;
+    public Movie(String id) {
+        this.id = id;
     }
+
 
     public Movie(String id, String title, String overview, String poster_path, String release_date, double vote_average, double vote_count, List<String> genreList, String backdrop_path) {
         this.id = id;
