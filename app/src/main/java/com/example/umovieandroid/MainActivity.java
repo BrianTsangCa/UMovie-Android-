@@ -26,6 +26,7 @@ import com.example.umovieandroid.Adapter.CardAdapter;
 import com.example.umovieandroid.Adapter.HeroAdapter;
 import com.example.umovieandroid.Adapter.RecommendAdapter;
 import com.example.umovieandroid.LocalDatabase.UMovieDatabase;
+import com.example.umovieandroid.Model.Comment;
 import com.example.umovieandroid.Model.Movie;
 import com.example.umovieandroid.RegisterLoginAcitivties.PreferenceActivity;
 import com.example.umovieandroid.RegisterLoginAcitivties.RegisterLoginActivity;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     Dictionary<String, Integer> dict = new Hashtable<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference preferencesRef = db.collection("preferences");
+    CollectionReference dislikeVector = db.collection("Dislike Vector");
     List<String> genreList = new ArrayList<>();
     List<String> eraList = new ArrayList<>();
     List<String> ratingList = new ArrayList<>();
@@ -86,6 +88,8 @@ public class MainActivity extends AppCompatActivity {
     final String TAG = "umovie";
     List<String> genre = new ArrayList<>();
     TextView txtView0, txtView1, txtView2, txtView3, txtView4;
+    Double[] dislikeVectorArray = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+
     RecyclerView recyclerviewRecommended, carousel_recycler_view, recyclerview0, recyclerview1, recyclerview2, recyclerview3, recyclerview4;
     String userEmail;
     FirebaseUser user;
@@ -142,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.favorite) {
-            startActivity(new Intent(this,WatchListActivity.class));
+            startActivity(new Intent(this, WatchListActivity.class));
             return true;
         } else if (item.getItemId() == R.id.action_search) {
             return true;
@@ -199,6 +203,42 @@ public class MainActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         generateGenreMovieList();
         generateUserVector_MovieVector();
+        generateDislikeVector();
+    }
+
+    private void generateDislikeVector() {
+        dislikeVector.document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Map<String, Object> preferences = documentSnapshot.getData();
+                    if (preferences != null && preferences.containsKey("Dislike List")) {
+                        dislikeVectorArray= new Double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+                        String[] dislikeList_movieList = ((String) preferences.get("Dislike List")).split("_");
+                    }
+                    storeDislikeVector();
+                }
+            }
+        });
+    }
+
+    private void storeDislikeVector() {
+        Map<String, Object> preferenceCollection = new HashMap<>();
+        preferenceCollection.put("Dislike Vector", dislikeVectorArray);
+        db.collection("Dislike Vector").document(userEmail)
+                .set(preferenceCollection)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot adding with email: " + userEmail);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@androidx.annotation.NonNull Exception e) {
+                        Log.w(TAG, "Error adding document", e);
+                    }
+                });
     }
 
     private void storeMovieList() {
@@ -702,4 +742,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return output;
     }
+
 }
