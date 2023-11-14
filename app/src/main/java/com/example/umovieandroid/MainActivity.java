@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.umovieandroid.Adapter.CardAdapter;
 import com.example.umovieandroid.Adapter.HeroAdapter;
+import com.example.umovieandroid.Adapter.RecommendAdapter;
 import com.example.umovieandroid.LocalDatabase.UMovieDatabase;
 import com.example.umovieandroid.Model.Movie;
 import com.example.umovieandroid.RegisterLoginAcitivties.PreferenceActivity;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
     TextView[] txtViewArray = new TextView[5];
     HeroAdapter heroAdapter;
     CardAdapter[] adapters = new CardAdapter[5];
-    CardAdapter recommendedAdapter = new CardAdapter();
+    RecommendAdapter recommendedAdapter = new RecommendAdapter();
     final String TAG = "umovie";
     List<String> genre = new ArrayList<>();
     TextView txtView0, txtView1, txtView2, txtView3, txtView4;
@@ -198,7 +199,6 @@ public class MainActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         generateGenreMovieList();
         generateUserVector_MovieVector();
-
     }
 
     private void storeMovieList() {
@@ -597,7 +597,8 @@ public class MainActivity extends AppCompatActivity {
                         });
                         recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this,
                                 LinearLayoutManager.HORIZONTAL, false));
-                        recommendedAdapter = new CardAdapter(MainActivity.this, movieList_movieVector);
+
+                        recommendedAdapter = new RecommendAdapter(MainActivity.this, movieList_movieVector);
                         recyclerviewRecommended.setAdapter(recommendedAdapter);
                         calculateSimilarityScores();
                         generatePersonalizedMovieLists();
