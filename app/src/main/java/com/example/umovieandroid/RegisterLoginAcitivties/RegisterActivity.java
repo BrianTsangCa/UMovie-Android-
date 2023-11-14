@@ -89,17 +89,17 @@ public class RegisterActivity extends AppCompatActivity {
                                 Intent intent = new Intent(RegisterActivity.this, PreferenceActivity.class);
                                 String output = "Registration";
                                 intent.putExtra("status", output);
-                                intent.putExtra("email",_email);
+                                intent.putExtra("email", _email);
                                 Map<String, Object> user = new HashMap<>();
                                 user.put("email", _email);
                                 user.put("password", _password);
                                 user.put("userName", _userName);
-                                db.collection("users")
-                                        .add(user)
-                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                db.collection("users").document(_email)
+                                        .set(user)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                Log.d(TAG, "DocumentSnapshot added with ID: " + documentReference.getId());
+                                            public void onSuccess(Void aVoid) {
+                                                Log.d(TAG, "DocumentSnapshot adding with email: " + _email);
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
