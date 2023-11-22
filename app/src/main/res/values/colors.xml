@@ -3,4 +3,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FFFF0000</color>
     <color name="grey">#FFDDDDDD</color>
+    <color name="LightGrey">#95A5A6</color>
+    <color name="DarkGrey">#2C3E50</color>
 </resources>
