@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseUser user;
     SearchView searchView;
     RequestQueue requestQueue;
+    Boolean NeedToUpdate;
     List<String> genreList_MovieVector = new ArrayList<>();
     List<String> eraList_MovieVector = new ArrayList<>();
     List<String> idList_MovieVector = new ArrayList<>();
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                 } else {
                     initializeDislikeVector();
+                    getUserVector();
                 }
             }
         });
@@ -197,6 +199,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        NeedToUpdate = getIntent().getBooleanExtra("NeedToUpdate", false);
         addDictionary_List();
         carousel_recycler_view = findViewById(R.id.carousel_recycler_view);
         Toolbar toolbar = findViewById(R.id.toolbar);

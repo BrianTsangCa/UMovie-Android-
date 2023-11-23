@@ -166,7 +166,9 @@ public class MovieActivity extends AppCompatActivity {
                     storeMovieDislikeList();
                     getMovieDislikeVector(false);
                     checkOnList();
-                    startActivity(new Intent(MovieActivity.this, MainActivity.class));
+                    Intent intent=new Intent(MovieActivity.this, MainActivity.class);
+                    intent.putExtra("NeedToUpdate", true);
+                    startActivity(intent);
                 } else {
                     String[] temp = dislikeList_movieList.split("_");
                     if (!temp[0].equals("")) {
@@ -177,7 +179,9 @@ public class MovieActivity extends AppCompatActivity {
                     storeMovieDislikeList();
                     getMovieDislikeVector(true);
                     checkOnList();
-                    startActivity(new Intent(MovieActivity.this, MainActivity.class));
+                    Intent intent=new Intent(MovieActivity.this, MainActivity.class);
+                    intent.putExtra("NeedToUpdate", true);
+                    startActivity(intent);
                 }
             }
         });
