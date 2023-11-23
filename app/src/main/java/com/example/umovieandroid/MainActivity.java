@@ -55,6 +55,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -63,6 +64,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity {
     UMovieDatabase udb;
@@ -482,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void calculateSimilarityScores() {
+        List<Double> voteCountRating = generateVoteCountRating(movieList_movieVector);
         for (int i = 0; i < movieVector.size(); i++) {
             double output = 0;
             if (userVector.equals("") || movieVector.get(i).equals("")) {
@@ -495,6 +498,19 @@ public class MainActivity extends AppCompatActivity {
         }
         Collections.sort(movieList_movieVector);
         storeMovieList();
+    }
+
+    private List<Double> generateVoteCountRating(List<Movie> input) {
+        List<Double> output = new ArrayList<>();
+        List<Double[]> vote_count = new ArrayList<>();
+        for (int i = 0; i < input.size(); i++) {
+            vote_count.add(new Double[]{(double) i, input.get(i).getVote_count()});
+        }
+        vote_count.sort(Comparator.comparingDouble(pair -> -pair[1]));
+        for (int i = 0; i < vote_count.size(); i++) {
+            output.add(vote_count.get(i)[0]);
+        }
+        return output;
     }
 
     private double calculateSimilarityScores(String[] x, String[] y) {
