@@ -44,17 +44,31 @@ public class HeroAdapter extends RecyclerView.Adapter<HeroAdapter.ViewHolder> {
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, MovieActivity.class);
-                intent.putExtra("overview",movieList.get(holder.getAdapterPosition()).getOverview());
-                intent.putExtra("backdrop",movieList.get(holder.getAdapterPosition()).getBackdrop_path());
-                intent.putExtra("title",movieList.get(holder.getAdapterPosition()).getTitle());
-                intent.putExtra("rating",movieList.get(holder.getAdapterPosition()).getVote_average()+"");
-                intent.putExtra("year",movieList.get(holder.getAdapterPosition()).getRelease_date());
+                Intent intent = new Intent(context, MovieActivity.class);
+                intent.putExtra("id", movieList.get(holder.getAdapterPosition()).getId());
+                intent.putExtra("overview", movieList.get(holder.getAdapterPosition()).getOverview());
+                intent.putExtra("backdrop", movieList.get(holder.getAdapterPosition()).getBackdrop_path());
+                intent.putExtra("title", movieList.get(holder.getAdapterPosition()).getTitle());
+                intent.putExtra("rating", movieList.get(holder.getAdapterPosition()).getVote_average() + "");
+                intent.putExtra("year", movieList.get(holder.getAdapterPosition()).getRelease_date());
                 intent.putExtra("vote_count", movieList.get(holder.getAdapterPosition()).getVote_count());
-                startActivity(context,intent,null);
+                intent.putExtra("genre", generateGenreList(holder.getAdapterPosition()));
+                if (movieList.get(holder.getAdapterPosition()).getSimilarityScores() != -1) {
+                    intent.putExtra("score", movieList.get(holder.getAdapterPosition()).getSimilarityScores());
+                }
+                startActivity(context, intent, null);
             }
         });
         return holder;
+    }
+
+    private String generateGenreList(int adapterPosition) {
+        String output = "";
+        List<String> genreList = movieList.get(adapterPosition).getGenreList();
+        for (int i = 0; i < genreList.size(); i++) {
+            output += genreList.get(i) + ",";
+        }
+        return output.substring(0, output.length()-1);
     }
 
     @Override

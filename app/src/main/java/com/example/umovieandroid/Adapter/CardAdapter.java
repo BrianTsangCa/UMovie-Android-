@@ -52,6 +52,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
                 intent.putExtra("rating", movieList.get(holder.getAdapterPosition()).getVote_average() + "");
                 intent.putExtra("year", movieList.get(holder.getAdapterPosition()).getRelease_date());
                 intent.putExtra("vote_count", movieList.get(holder.getAdapterPosition()).getVote_count());
+                intent.putExtra("genre", generateGenreList(holder.getAdapterPosition()));
                 if (movieList.get(holder.getAdapterPosition()).getSimilarityScores() != -1) {
                     intent.putExtra("score", movieList.get(holder.getAdapterPosition()).getSimilarityScores());
                 }
@@ -61,6 +62,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolder> {
         return holder;
     }
 
+    private String generateGenreList(int adapterPosition) {
+        String output = "";
+        List<String> genreList = movieList.get(adapterPosition).getGenreList();
+        for (int i = 0; i < genreList.size(); i++) {
+            output += genreList.get(i) + ",";
+        }
+        return output.substring(0, output.length()-1);
+    }
     @Override
     public void onBindViewHolder(@NonNull CardAdapter.ViewHolder holder, int position) {
         ImageView imageView = holder.card_image_view;

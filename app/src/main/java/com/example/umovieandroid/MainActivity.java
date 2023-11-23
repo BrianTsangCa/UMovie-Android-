@@ -69,11 +69,11 @@ public class MainActivity extends AppCompatActivity {
     Dictionary<String, Integer> dict = new Hashtable<>();
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     CollectionReference preferencesRef = db.collection("preferences");
-    CollectionReference dislikeVector = db.collection("Dislike Vector");
     List<String> genreList = new ArrayList<>();
     List<String> eraList = new ArrayList<>();
     List<String> ratingList = new ArrayList<>();
     List<String> actorList = new ArrayList<>();
+
     private FirebaseAuth mAuth;
     List<Movie> movielist = new ArrayList<>();
     List<Movie> movieList_movieVector = new ArrayList<>();
@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
     final String TAG = "umovie";
     List<String> genre = new ArrayList<>();
     TextView txtView0, txtView1, txtView2, txtView3, txtView4;
-    Double[] dislikeVectorArray = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
 
     RecyclerView recyclerviewRecommended, carousel_recycler_view, recyclerview0, recyclerview1, recyclerview2, recyclerview3, recyclerview4;
     String userEmail;
@@ -101,6 +100,33 @@ public class MainActivity extends AppCompatActivity {
     List<String> movieVector = new ArrayList<>();
     String userVector = "";
     List<Double> similarityScoresList = new ArrayList<>();
+
+    CollectionReference dislikeVectorRef = db.collection("Dislike Vector");
+    List<Double> dislikeVectorArray = new ArrayList<>();
+
+    private void getMovieDislikeVector() {
+        dislikeVectorRef.document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    Map<String, Object> preferences = documentSnapshot.getData();
+                    if (preferences != null && preferences.containsKey("Dislike Vector")) {
+                        dislikeVectorArray = (List<Double>) preferences.get("Dislike Vector");
+                        getUserVector();
+                    }
+                } else {
+                    initializeDislikeVector();
+                }
+            }
+        });
+    }
+
+    private void initializeDislikeVector() {
+        dislikeVectorArray = new ArrayList<>();
+        for (int i = 0; i < 25; i++) {
+            dislikeVectorArray.add(1.0);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(@androidx.annotation.NonNull Menu menu) {
@@ -203,42 +229,6 @@ public class MainActivity extends AppCompatActivity {
         user = FirebaseAuth.getInstance().getCurrentUser();
         generateGenreMovieList();
         generateUserVector_MovieVector();
-        generateDislikeVector();
-    }
-
-    private void generateDislikeVector() {
-        dislikeVector.document(userEmail).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    Map<String, Object> preferences = documentSnapshot.getData();
-                    if (preferences != null && preferences.containsKey("Dislike List")) {
-                        dislikeVectorArray= new Double[]{1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
-                        String[] dislikeList_movieList = ((String) preferences.get("Dislike List")).split("_");
-                    }
-                    storeDislikeVector();
-                }
-            }
-        });
-    }
-
-    private void storeDislikeVector() {
-        Map<String, Object> preferenceCollection = new HashMap<>();
-        preferenceCollection.put("Dislike Vector", dislikeVectorArray);
-        db.collection("Dislike Vector").document(userEmail)
-                .set(preferenceCollection)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot adding with email: " + userEmail);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@androidx.annotation.NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
     }
 
     private void storeMovieList() {
@@ -314,7 +304,7 @@ public class MainActivity extends AppCompatActivity {
                         List<String> genreList = new ArrayList<>();
                         JSONArray genreArray = Data.getJSONArray("genre_ids");
                         for (int j = 0; j < genreArray.length(); j++) {
-                            genreList.add(genreArray.getInt(j) + "");
+                            genreList.add(getKeyByValue(dict, genreArray.getInt(j)));
                         }
                         movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreList, Data.getString("backdrop_path")));
                     }
@@ -342,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         requestQueue.add(jsonObjectRequest);
-        getUserVector();
+        getMovieDislikeVector();
         getMovieVector();
     }
 
@@ -361,7 +351,7 @@ public class MainActivity extends AppCompatActivity {
                         List<String> genreList = new ArrayList<>();
                         JSONArray genreArray = Data.getJSONArray("genre_ids");
                         for (int j = 0; j < genreArray.length(); j++) {
-                            genreList.add(genreArray.getInt(j) + "");
+                            genreList.add(getKeyByValue(dict, genreArray.getInt(j)));
                         }
                         movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreList, Data.getString("backdrop_path")));
 
@@ -418,12 +408,12 @@ public class MainActivity extends AppCompatActivity {
                                         try {
                                             JSONArray results = response.getJSONArray("results");
                                             List<Movie> movielist = new ArrayList<>();
-                                            for (int j = 0; j < results.length(); j++) {
-                                                JSONObject Data = results.getJSONObject(j);
+                                            for (int i = 0; i < results.length(); i++) {
+                                                JSONObject Data = results.getJSONObject(i);
                                                 List<String> genreList = new ArrayList<>();
                                                 JSONArray genreArray = Data.getJSONArray("genre_ids");
-                                                for (int i = 0; i < genreArray.length(); i++) {
-                                                    genreList.add(genreArray.getInt(i) + "");
+                                                for (int j = 0; j < genreArray.length(); j++) {
+                                                    genreList.add(getKeyByValue(dict, genreArray.getInt(j)));
                                                 }
                                                 movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreList, Data.getString("backdrop_path")));
                                             }
@@ -534,7 +524,14 @@ public class MainActivity extends AppCompatActivity {
                 double[] b = getEraVector(eraList);
                 double[] c = getActorVector(actorList);
                 userVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
-
+                String[] userVectorList = userVector.split(",");
+                for (int i = 0; i < dislikeVectorArray.size(); i++) {
+                    userVectorList[i] = "" + Double.parseDouble(userVectorList[i]) * dislikeVectorArray.get(i);
+                }
+                for (int i = 0; i < dislikeVectorArray.size(); i++) {
+                    userVector = userVectorList[i] + ",";
+                }
+                userVector = userVector.substring(0, userVector.length() - 1);
                 MovieVectorDao movieDao = udb.movieVectorDao();
                 UserVectorDao userDao = udb.userVectorDao();
 
@@ -545,7 +542,6 @@ public class MainActivity extends AppCompatActivity {
                         userDao.insertUserVector(new UserVector(userEmail, userVector));
                     }
                 });
-
             }
         });
     }
