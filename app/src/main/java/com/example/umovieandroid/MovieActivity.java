@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -165,6 +166,7 @@ public class MovieActivity extends AppCompatActivity {
                     storeMovieDislikeList();
                     getMovieDislikeVector(false);
                     checkOnList();
+                    startActivity(new Intent(MovieActivity.this, MainActivity.class));
                 } else {
                     String[] temp = dislikeList_movieList.split("_");
                     if (!temp[0].equals("")) {
@@ -175,6 +177,7 @@ public class MovieActivity extends AppCompatActivity {
                     storeMovieDislikeList();
                     getMovieDislikeVector(true);
                     checkOnList();
+                    startActivity(new Intent(MovieActivity.this, MainActivity.class));
                 }
             }
         });
@@ -223,7 +226,7 @@ public class MovieActivity extends AppCompatActivity {
         for (int i = 0; i < genreList.length; i++) {
             switch (genreList[i]) {
                 case "Action":
-                    dislikeVectorArray.set(0, dislikeVectorArray.get(0) *multiplier);
+                    dislikeVectorArray.set(0, dislikeVectorArray.get(0) * multiplier);
                     break;
                 case "Adventure":
                     dislikeVectorArray.set(1, dislikeVectorArray.get(1) * multiplier);

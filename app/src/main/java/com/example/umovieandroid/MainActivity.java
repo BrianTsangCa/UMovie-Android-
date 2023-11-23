@@ -250,6 +250,13 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        generateGenreMovieList();
+        generateUserVector_MovieVector();
+    }
+
     private void addDictionary_List() {
         dict.put("Action", 28);
         dict.put("Adventure", 12);
@@ -526,19 +533,19 @@ public class MainActivity extends AppCompatActivity {
                 userVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
                 String[] userVectorList = userVector.split(",");
                 for (int i = 0; i < dislikeVectorArray.size(); i++) {
-                    userVectorList[i] = "" + Double.parseDouble(userVectorList[i]) * dislikeVectorArray.get(i);
+                    userVectorList[i] = (Double.parseDouble(userVectorList[i]) * dislikeVectorArray.get(i)) + "";
                 }
+                userVector = "";
                 for (int i = 0; i < dislikeVectorArray.size(); i++) {
-                    userVector = userVectorList[i] + ",";
+                    userVector += userVectorList[i] + ",";
                 }
                 userVector = userVector.substring(0, userVector.length() - 1);
-                MovieVectorDao movieDao = udb.movieVectorDao();
                 UserVectorDao userDao = udb.userVectorDao();
-
                 ExecutorService executorService = Executors.newSingleThreadExecutor();
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
+                        Log.d(TAG, userVector);
                         userDao.insertUserVector(new UserVector(userEmail, userVector));
                     }
                 });
@@ -569,6 +576,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         try {
                             JSONArray results = response.getJSONArray("results");
+                            movieList_movieVector = new ArrayList<>();
                             for (int i = 0; i < results.length(); i++) {
                                 JSONObject Data = results.getJSONObject(i);
                                 List<String> genreListtemp = new ArrayList<>();
@@ -692,10 +700,6 @@ public class MainActivity extends AppCompatActivity {
             }
             position++;
         }
-        String toast = "";
-        for (int i = 0; i < output.length; i++) {
-            toast += output[i] + " ";
-        }
         return output;
     }
 
@@ -713,10 +717,6 @@ public class MainActivity extends AppCompatActivity {
                 output[i] = 0;
             }
         }
-        String toast = "";
-        for (int i = 0; i < output.length; i++) {
-            toast += output[i] + " ";
-        }
         return output;
     }
 
@@ -731,10 +731,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 output[i] = 0;
             }
-        }
-        String toast = "";
-        for (int i = 0; i < output.length; i++) {
-            toast += output[i] + " ";
         }
         return output;
     }
