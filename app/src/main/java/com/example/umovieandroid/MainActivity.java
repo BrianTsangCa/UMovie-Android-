@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
     List<String> movieVector = new ArrayList<>();
     String userVector = "";
     List<Double> similarityScoresList = new ArrayList<>();
-
     CollectionReference dislikeVectorRef = db.collection("Dislike Vector");
     List<Double> dislikeVectorArray = new ArrayList<>();
 
@@ -116,10 +115,12 @@ public class MainActivity extends AppCompatActivity {
                     if (preferences != null && preferences.containsKey("Dislike Vector")) {
                         dislikeVectorArray = (List<Double>) preferences.get("Dislike Vector");
                         getUserVector();
+                        getMovieVector();
                     }
                 } else {
                     initializeDislikeVector();
-                    getUserVector();
+                     getUserVector();
+                    getMovieVector();
                 }
             }
         });
@@ -304,7 +305,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void generateUserVector_MovieVector() {
-
         String url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc";
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
@@ -345,7 +345,7 @@ public class MainActivity extends AppCompatActivity {
         };
         requestQueue.add(jsonObjectRequest);
         getMovieDislikeVector();
-        getMovieVector();
+
     }
 
     private void generateGenreMovieList() {
@@ -484,7 +484,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void calculateSimilarityScores() {
-        List<Double> voteCountRating = generateVoteCountRating(movieList_movieVector);
+//        List<Double> voteCountRating = generateVoteCountRating(movieList_movieVector);
         for (int i = 0; i < movieVector.size(); i++) {
             double output = 0;
             if (userVector.equals("") || movieVector.get(i).equals("")) {
@@ -499,7 +499,7 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(movieList_movieVector);
         storeMovieList();
     }
-
+/*
     private List<Double> generateVoteCountRating(List<Movie> input) {
         List<Double> output = new ArrayList<>();
         List<Double[]> vote_count = new ArrayList<>();
@@ -512,7 +512,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return output;
     }
-
+*/
     private double calculateSimilarityScores(String[] x, String[] y) {
         double output = 0;
         double x_y = 0;
@@ -549,8 +549,10 @@ public class MainActivity extends AppCompatActivity {
                 double[] a = getGenreVector(genreList);
                 double[] b = getEraVector(eraList);
                 double[] c = getActorVector(actorList);
+                Log.d(TAG, " userVector:"+userVector);
                 userVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
                 String[] userVectorList = userVector.split(",");
+
                 for (int i = 0; i < dislikeVectorArray.size(); i++) {
                     userVectorList[i] = (Double.parseDouble(userVectorList[i]) * dislikeVectorArray.get(i)) + "";
                 }
@@ -564,7 +566,6 @@ public class MainActivity extends AppCompatActivity {
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d(TAG, userVector);
                         userDao.insertUserVector(new UserVector(userEmail, userVector));
                     }
                 });
