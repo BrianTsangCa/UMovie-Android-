@@ -102,7 +102,7 @@ public class MovieActivity extends AppCompatActivity {
         }
         txt_rating.setText("Rating: " + rating + " , Genre: " + genre.substring(0, genre.length() - 1));
         if (score != -1) {
-            txt_year.setText(score + " % Matches " + "Year: " + release_date.substring(0, 4) + " Vote count:" + (int) vote_count);
+            txt_year.setText("Similiarity Score: "+(double)score/10  + " Year: " + release_date.substring(0, 4) + " Vote count:" + (int) vote_count);
         } else {
             txt_year.setText("Year: " + release_date.substring(0, 4));
         }

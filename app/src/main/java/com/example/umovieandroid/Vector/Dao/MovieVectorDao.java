@@ -8,7 +8,7 @@ import com.example.umovieandroid.Vector.Model.MovieVector;
 
 @Dao
 public interface MovieVectorDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertMovieVector(MovieVector movieVector) ;
 
 }

@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> eraList_MovieVector = new ArrayList<>();
     List<String> idList_MovieVector = new ArrayList<>();
     List<String> movieVector = new ArrayList<>();
+    List<String> movieTitles=new ArrayList<>();
     String userVector = "";
     List<Double> similarityScoresList = new ArrayList<>();
     CollectionReference dislikeVectorRef = db.collection("Dislike Vector");
@@ -116,16 +117,19 @@ public class MainActivity extends AppCompatActivity {
                         dislikeVectorArray = (List<Double>) preferences.get("Dislike Vector");
                         getUserVector();
                         getMovieVector();
+                    }else{
+                        initializeDislikeVector();
+                        getUserVector();
+                        getMovieVector();
                     }
-                } else {
+                }else {
                     initializeDislikeVector();
-                     getUserVector();
+                    getUserVector();
                     getMovieVector();
                 }
             }
         });
     }
-
     private void initializeDislikeVector() {
         dislikeVectorArray = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
@@ -172,8 +176,6 @@ public class MainActivity extends AppCompatActivity {
         });
         return true;
     }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.favorite) {
@@ -258,8 +260,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        generateGenreMovieList();
-        generateUserVector_MovieVector();
+        if(NeedToUpdate){
+            getMovieVectorFromMovieList();
+            generateUserVector_MovieVector();
+        }
     }
     private void addDictionary_List() {
         dict.put("Action", 28);
@@ -343,7 +347,6 @@ public class MainActivity extends AppCompatActivity {
         };
         requestQueue.add(jsonObjectRequest);
         getMovieDislikeVector();
-
     }
 
     private void generateGenreMovieList() {
@@ -364,7 +367,6 @@ public class MainActivity extends AppCompatActivity {
                             genreList.add(getKeyByValue(dict, genreArray.getInt(j)));
                         }
                         movielist.add(new Movie(Data.getString("id"), Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreList, Data.getString("backdrop_path")));
-
                     }
                     txtViewArray[0].setText("Action");
                     movielistarray[0] = movielist;
@@ -482,20 +484,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void calculateSimilarityScores() {
-       Double[] voteCountRating = generateVoteCountRating(movieList_movieVector);
+        Double[] voteCountRating = generateVoteCountRating(movieList_movieVector);
+        //Double[] voteCountRating ={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
+       String infor="";
+       for(int i=0;i<voteCountRating.length;i++){
+           infor+=voteCountRating[i]+" , ";
+       }
+       Log.d(TAG,"Vote count info:"+infor);
+       Log.d(TAG, "user vector" + userVector);
+       for (int i=0; i < movieVector.size(); i++) {
+            Log.d(TAG, "movie vector "+i+" "+movieVector.get(i));
+        }
+//       Toast.makeText(this, "voteCountRating: "+infor, Toast.LENGTH_SHORT).show();
 
         for (int i = 0; i < movieVector.size(); i++) {
             double output = 0;
             if (userVector.equals("") || movieVector.get(i).equals("")) {
                 output = 0;
-                output = voteCountRating[i]*calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
+//                output = voteCountRating[i]*calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             } else {
                 output = voteCountRating[i]*calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             }
+            Log.d(TAG, "movie score" + i + ":" + output);
             similarityScoresList.add(output);
             movieList_movieVector.get(i).setSimilarityScores((int) (output * 100));
         }
         Collections.sort(movieList_movieVector);
+        getMovieVectorFromMovieList();
         storeMovieList();
     }
     private Double[] generateVoteCountRating(List<Movie> input) {
@@ -553,10 +568,9 @@ public class MainActivity extends AppCompatActivity {
                 double[] a = getGenreVector(genreList);
                 double[] b = getEraVector(eraList);
                 double[] c = getActorVector(actorList);
-                Log.d(TAG, " userVector:"+userVector);
+                Log.d(TAG, " old- userVector:"+userVector);
                 userVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
                 String[] userVectorList = userVector.split(",");
-
                 for (int i = 0; i < dislikeVectorArray.size(); i++) {
                     userVectorList[i] = (Double.parseDouble(userVectorList[i]) * dislikeVectorArray.get(i)) + "";
                 }
@@ -617,41 +631,8 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         movieVector = new ArrayList<>();
-                        List<String> movieTitles = new ArrayList<>();
-                        for (int i = 0; i < movieList_movieVector.size(); i++) {
-                            genreList_MovieVector = movieList_movieVector.get(i).getGenreList();
-                            double[] a = getGenreVector(genreList_MovieVector);
-                            int year = Integer.parseInt(movieList_movieVector.get(i).getRelease_date().split("-")[0]);
-                            if (year >= 1970 && year <= 1989) {
-                                eraList_MovieVector.add("Golden Age Era (1970- 1989)");
-                            } else if (year >= 1917 && year <= 1969) {
-                                eraList_MovieVector.add("Classic Era (1917-1969)");
-                            } else if (year >= 1990 && year <= 2009) {
-                                eraList_MovieVector.add("Modern Era (1990-2009)");
-                            } else if (year >= 2010 && year <= 2023) {
-                                eraList_MovieVector.add("Contemporary Era (2010-2023)");
-                            }
-                            double[] b = getEraVector(eraList_MovieVector);
-                            int id = Integer.parseInt(movieList_movieVector.get(i).getId());
-                            List<Integer> BradMovieList = new ArrayList<>();
-                            BradMovieList.add(16869);
-                            BradMovieList.add(72190);
-                            BradMovieList.add(550);
-                            List<Integer> LeonardoMovieList = new ArrayList<>();
-                            LeonardoMovieList.add(27205);
-                            LeonardoMovieList.add(597);
-                            LeonardoMovieList.add(11324);
-                            LeonardoMovieList.add(27205);
-                            if (BradMovieList.contains(id)) {
-                                idList_MovieVector.add("Brad Pitt");
-                            } else if (LeonardoMovieList.contains(id)) {
-                                idList_MovieVector.add("Leonardo DiCaprio");
-                            }
-                            double[] c = getActorVector(idList_MovieVector);
-                            String aMovieVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
-                            movieVector.add(aMovieVector);
-                            movieTitles.add(movieList_movieVector.get(i).getTitle());
-                        }
+                        movieTitles = new ArrayList<>();
+                        getMovieVectorFromMovieList();
                         MovieVectorDao movieDao = udb.movieVectorDao();
 
                         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -693,6 +674,42 @@ public class MainActivity extends AppCompatActivity {
                 requestQueue.add(jsonObjectRequest);
             }
         });
+    }
+
+    private void getMovieVectorFromMovieList() {
+        for (int i = 0; i < movieList_movieVector.size(); i++) {
+            genreList_MovieVector = movieList_movieVector.get(i).getGenreList();
+            double[] a = getGenreVector(genreList_MovieVector);
+            int year = Integer.parseInt(movieList_movieVector.get(i).getRelease_date().split("-")[0]);
+            if (year >= 1970 && year <= 1989) {
+                eraList_MovieVector.add("Golden Age Era (1970- 1989)");
+            } else if (year >= 1917 && year <= 1969) {
+                eraList_MovieVector.add("Classic Era (1917-1969)");
+            } else if (year >= 1990 && year <= 2009) {
+                eraList_MovieVector.add("Modern Era (1990-2009)");
+            } else if (year >= 2010 && year <= 2023) {
+                eraList_MovieVector.add("Contemporary Era (2010-2023)");
+            }
+            double[] b = getEraVector(eraList_MovieVector);
+            int id = Integer.parseInt(movieList_movieVector.get(i).getId());
+            List<Integer> BradMovieList = new ArrayList<>();
+            BradMovieList.add(16869);
+            BradMovieList.add(72190);
+            BradMovieList.add(550);
+            List<Integer> LeonardoMovieList = new ArrayList<>();
+            LeonardoMovieList.add(27205);
+            LeonardoMovieList.add(597);
+            LeonardoMovieList.add(11324);
+            if (BradMovieList.contains(id)) {
+                idList_MovieVector.add("Brad Pitt");
+            } else if (LeonardoMovieList.contains(id)) {
+                idList_MovieVector.add("Leonardo DiCaprio");
+            }
+            double[] c = getActorVector(idList_MovieVector);
+            String aMovieVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
+            movieVector.add(aMovieVector);
+            movieTitles.add(movieList_movieVector.get(i).getTitle());
+        }
     }
 
     private String getKeyByValue(Dictionary<String, Integer> dict, int i) {

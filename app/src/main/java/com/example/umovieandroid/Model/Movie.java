@@ -9,10 +9,23 @@ public class Movie implements Comparable<Movie> {
     private String poster_path;
     public String backdrop_path;
     private String release_date;
-
+    private int changingSign;
     private double vote_average;
     private double vote_count;
     private List<String> genreList;
+    private List<Double> movieVector;
+
+    public int getChangingSign() {
+        return changingSign;
+    }
+    public List<Double> getMovieVector() {
+        return movieVector;
+    }
+
+    public void setMovieVector(List<Double> movieVector) {
+        this.movieVector = movieVector;
+    }
+
     private int similarityScores = -1;
 
     public int getSimilarityScores() {
@@ -20,6 +33,13 @@ public class Movie implements Comparable<Movie> {
     }
 
     public void setSimilarityScores(int similarityScores) {
+        if(this.similarityScores==-1||similarityScores==this.similarityScores){
+            changingSign=0;
+        }else if(similarityScores>this.similarityScores){
+            changingSign=1;
+        }else if(similarityScores<this.similarityScores){
+            changingSign=-1;
+        }
         this.similarityScores = similarityScores;
     }
 
