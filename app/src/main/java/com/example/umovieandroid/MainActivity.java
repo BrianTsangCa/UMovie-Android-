@@ -255,14 +255,12 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
     @Override
     protected void onResume() {
         super.onResume();
         generateGenreMovieList();
         generateUserVector_MovieVector();
     }
-
     private void addDictionary_List() {
         dict.put("Action", 28);
         dict.put("Adventure", 12);
@@ -484,14 +482,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void calculateSimilarityScores() {
-//        List<Double> voteCountRating = generateVoteCountRating(movieList_movieVector);
+       Double[] voteCountRating = generateVoteCountRating(movieList_movieVector);
+
         for (int i = 0; i < movieVector.size(); i++) {
             double output = 0;
             if (userVector.equals("") || movieVector.get(i).equals("")) {
                 output = 0;
-                output = calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
+                output = voteCountRating[i]*calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             } else {
-                output = calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
+                output = voteCountRating[i]*calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             }
             similarityScoresList.add(output);
             movieList_movieVector.get(i).setSimilarityScores((int) (output * 100));
@@ -499,20 +498,25 @@ public class MainActivity extends AppCompatActivity {
         Collections.sort(movieList_movieVector);
         storeMovieList();
     }
-/*
-    private List<Double> generateVoteCountRating(List<Movie> input) {
-        List<Double> output = new ArrayList<>();
-        List<Double[]> vote_count = new ArrayList<>();
+    private Double[] generateVoteCountRating(List<Movie> input) {
+        List<Integer> sortedIndexes = new ArrayList<>();
+        List<Integer[]> voteCountIndexPairs = new ArrayList<>();
         for (int i = 0; i < input.size(); i++) {
-            vote_count.add(new Double[]{(double) i, input.get(i).getVote_count()});
+            voteCountIndexPairs.add(new Integer[]{i, (int) input.get(i).getVote_count()});
         }
-        vote_count.sort(Comparator.comparingDouble(pair -> -pair[1]));
-        for (int i = 0; i < vote_count.size(); i++) {
-            output.add(vote_count.get(i)[0]);
+        voteCountIndexPairs.sort(Comparator.comparingInt(pair -> -pair[1]));
+
+        for (Integer[] pair : voteCountIndexPairs) {
+            sortedIndexes.add(pair[0]);
         }
-        return output;
+        String print="";
+        Double[] proportions = new Double[sortedIndexes.size()];
+        for (int i = 0; i < sortedIndexes.size(); i++) {
+            proportions[sortedIndexes.get(i)]= ((double)sortedIndexes.size() - i) / sortedIndexes.size();
+        }
+        return proportions;
     }
-*/
+
     private double calculateSimilarityScores(String[] x, String[] y) {
         double output = 0;
         double x_y = 0;
