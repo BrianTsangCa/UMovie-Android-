@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> eraList_MovieVector = new ArrayList<>();
     List<String> idList_MovieVector = new ArrayList<>();
     List<String> movieVector = new ArrayList<>();
-    List<String> movieTitles=new ArrayList<>();
+    List<String> movieTitles = new ArrayList<>();
     String userVector = "";
     List<Double> similarityScoresList = new ArrayList<>();
     CollectionReference dislikeVectorRef = db.collection("Dislike Vector");
@@ -117,12 +117,12 @@ public class MainActivity extends AppCompatActivity {
                         dislikeVectorArray = (List<Double>) preferences.get("Dislike Vector");
                         getUserVector();
                         getMovieVector();
-                    }else{
+                    } else {
                         initializeDislikeVector();
                         getUserVector();
                         getMovieVector();
                     }
-                }else {
+                } else {
                     initializeDislikeVector();
                     getUserVector();
                     getMovieVector();
@@ -130,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     private void initializeDislikeVector() {
         dislikeVectorArray = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
@@ -176,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
         });
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.favorite) {
@@ -230,9 +232,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewArray[2] = recyclerview2;
         recyclerViewArray[3] = recyclerview3;
         recyclerViewArray[4] = recyclerview4;
-        udb = Room.databaseBuilder(
-                        getApplicationContext(), UMovieDatabase.class, "umovie.db")
-                .build();
+        udb = Room.databaseBuilder(getApplicationContext(), UMovieDatabase.class, "umovie.db").build();
         requestQueue = Volley.newRequestQueue(this);
         user = FirebaseAuth.getInstance().getCurrentUser();
         generateGenreMovieList();
@@ -242,29 +242,34 @@ public class MainActivity extends AppCompatActivity {
     private void storeMovieList() {
         Map<String, Object> preferenceCollection = new HashMap<>();
         preferenceCollection.put("Movie List", movieList_movieVector);
-        db.collection("Movie List").document(userEmail)
-                .set(preferenceCollection)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot adding with email: " + userEmail);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@androidx.annotation.NonNull Exception e) {
-                        Log.w(TAG, "Error adding document", e);
-                    }
-                });
+        db.collection("Movie List").document(userEmail).set(preferenceCollection).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "DocumentSnapshot adding with email: " + userEmail);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@androidx.annotation.NonNull Exception e) {
+                Log.w(TAG, "Error adding document", e);
+            }
+        });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
-        if(NeedToUpdate){
-            getMovieVectorFromMovieList();
+        if (NeedToUpdate) {
+            movieVector = new ArrayList<>();
+            for (int i = 0; i < movieList_movieVector.size(); i++) {
+                movieVector.add(movieList_movieVector.get(i).getMovieVectorFromMovieList());
+            }
+            calculateSimilarityScores();
+            generatePersonalizedMovieLists();
+            recommendedAdapter.notifyDataSetChanged();
             generateUserVector_MovieVector();
         }
     }
+
     private void addDictionary_List() {
         dict.put("Action", 28);
         dict.put("Adventure", 12);
@@ -485,15 +490,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void calculateSimilarityScores() {
         Double[] voteCountRating = generateVoteCountRating(movieList_movieVector);
-        //Double[] voteCountRating ={1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0};
-       String infor="";
-       for(int i=0;i<voteCountRating.length;i++){
-           infor+=voteCountRating[i]+" , ";
-       }
-       Log.d(TAG,"Vote count info:"+infor);
-       Log.d(TAG, "user vector" + userVector);
-       for (int i=0; i < movieVector.size(); i++) {
-            Log.d(TAG, "movie vector "+i+" "+movieVector.get(i));
+        //Double[] voteCountRating = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
+        String infor = "";
+        for (int i = 0; i < voteCountRating.length; i++) {
+            infor += voteCountRating[i] + " , ";
+        }
+        Log.d(TAG, "Vote count info:" + infor);
+        Log.d(TAG, "user vector" + userVector);
+        for (int i = 0; i < movieVector.size(); i++) {
+            Log.d(TAG, "movie vector " + i + " " + movieVector.get(i));
         }
 //       Toast.makeText(this, "voteCountRating: "+infor, Toast.LENGTH_SHORT).show();
 
@@ -503,7 +508,7 @@ public class MainActivity extends AppCompatActivity {
                 output = 0;
 //                output = voteCountRating[i]*calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             } else {
-                output = voteCountRating[i]*calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
+                output = voteCountRating[i] * calculateSimilarityScores(userVector.split(","), movieVector.get(i).split(","));
             }
             Log.d(TAG, "movie score" + i + ":" + output);
             similarityScoresList.add(output);
@@ -513,6 +518,7 @@ public class MainActivity extends AppCompatActivity {
         getMovieVectorFromMovieList();
         storeMovieList();
     }
+
     private Double[] generateVoteCountRating(List<Movie> input) {
         List<Integer> sortedIndexes = new ArrayList<>();
         List<Integer[]> voteCountIndexPairs = new ArrayList<>();
@@ -524,10 +530,10 @@ public class MainActivity extends AppCompatActivity {
         for (Integer[] pair : voteCountIndexPairs) {
             sortedIndexes.add(pair[0]);
         }
-        String print="";
+        String print = "";
         Double[] proportions = new Double[sortedIndexes.size()];
         for (int i = 0; i < sortedIndexes.size(); i++) {
-            proportions[sortedIndexes.get(i)]= ((double)sortedIndexes.size() - i) / sortedIndexes.size();
+            proportions[sortedIndexes.get(i)] = ((double) sortedIndexes.size() - i) / sortedIndexes.size();
         }
         return proportions;
     }
@@ -568,7 +574,7 @@ public class MainActivity extends AppCompatActivity {
                 double[] a = getGenreVector(genreList);
                 double[] b = getEraVector(eraList);
                 double[] c = getActorVector(actorList);
-                Log.d(TAG, " old- userVector:"+userVector);
+                Log.d(TAG, " old- userVector:" + userVector);
                 userVector = arrayToString(a) + "," + arrayToString(b) + "," + arrayToString(c);
                 String[] userVectorList = userVector.split(",");
                 for (int i = 0; i < dislikeVectorArray.size(); i++) {
@@ -603,11 +609,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 String url = "";
                 if (ratingList.size() == 0) {
-                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=" +
-                            "en-US&page=1&sort_by=popularity.desc&vote_count.gte=10";
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=" + "en-US&page=1&sort_by=popularity.desc&vote_count.gte=10";
                 } else {
-                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=" +
-                            "en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0) + "&vote_count.gte=10";
+                    url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=" + "en-US&page=1&sort_by=popularity.desc&vote_average.gte=" + ratingList.get(0) + "&vote_count.gte=10";
                 }
                 jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -622,10 +626,7 @@ public class MainActivity extends AppCompatActivity {
                                 for (int j = 0; j < genreJsonArray.length(); j++) {
                                     genreListtemp.add(getKeyByValue(dict, genreJsonArray.getInt(j)));
                                 }
-                                movieList_movieVector.add(new Movie(Data.getInt("id") + "", Data.getString("title"),
-                                        Data.getString("overview"), Data.getString("poster_path"),
-                                        Data.getString("release_date"), Data.getDouble("vote_average"),
-                                        Data.getDouble("vote_count"), genreListtemp, Data.getString("backdrop_path")));
+                                movieList_movieVector.add(new Movie(Data.getInt("id") + "", Data.getString("title"), Data.getString("overview"), Data.getString("poster_path"), Data.getString("release_date"), Data.getDouble("vote_average"), Data.getDouble("vote_count"), genreListtemp, Data.getString("backdrop_path")));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -644,8 +645,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             }
                         });
-                        recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this,
-                                LinearLayoutManager.HORIZONTAL, false));
+                        recyclerviewRecommended.setLayoutManager(new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false));
 
                         recommendedAdapter = new RecommendAdapter(MainActivity.this, movieList_movieVector);
                         recyclerviewRecommended.setAdapter(recommendedAdapter);
@@ -659,15 +659,12 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
                         Log.d("error", "Error: " + error.getMessage());
                     }
-                }
-                ) {
+                }) {
                     @Override
                     public Map<String, String> getHeaders() {
                         Map<String, String> headers = new HashMap<>();
                         // Add the Authorization header with the Bearer token
-                        headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFl" +
-                                "MjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfc" +
-                                "mVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
+                        headers.put("Authorization", "Bearer " + "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjM2U5NGNjMzk3ZTkyYTFl" + "MjdkOWM2YmE2NDAyYWVjMSIsInN1YiI6IjY1MDBmNjg0ZWZlYTdhMDExYWI4MzZlOCIsInNjb3BlcyI6WyJhcGlfc" + "mVhZCJdLCJ2ZXJzaW9uIjoxfQ.FyDIEJK4BE6pY5GqHJQM0EOCbnii7XmB8NjUy9vonnQ");
                         return headers;
                     }
                 };
@@ -678,6 +675,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getMovieVectorFromMovieList() {
         for (int i = 0; i < movieList_movieVector.size(); i++) {
+            genreList_MovieVector=new ArrayList<>();
+            eraList_MovieVector=new ArrayList<>();
+            idList_MovieVector=new ArrayList<>();
             genreList_MovieVector = movieList_movieVector.get(i).getGenreList();
             double[] a = getGenreVector(genreList_MovieVector);
             int year = Integer.parseInt(movieList_movieVector.get(i).getRelease_date().split("-")[0]);

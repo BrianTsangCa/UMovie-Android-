@@ -132,7 +132,7 @@ public class Movie implements Comparable<Movie> {
         return compareSimilarityScore - this.similarityScores;
     }
 
-    private String getMovieVectorFromMovieList() {
+    public String getMovieVectorFromMovieList() {
         List<String> genreList_MovieVector = new ArrayList<>();
         List<String> eraList_MovieVector = new ArrayList<>();
         List<String> idList_MovieVector = new ArrayList<>();
