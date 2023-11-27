@@ -255,21 +255,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (NeedToUpdate) {
-            movieVector = new ArrayList<>();
-            for (int i = 0; i < movieList_movieVector.size(); i++) {
-                movieVector.add(movieList_movieVector.get(i).getMovieVectorFromMovieList());
-            }
-            calculateSimilarityScores();
-            generatePersonalizedMovieLists();
-            recommendedAdapter.notifyDataSetChanged();
-            generateUserVector_MovieVector();
-        }
-    }
-
     private void addDictionary_List() {
         dict.put("Action", 28);
         dict.put("Adventure", 12);
@@ -675,9 +660,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void getMovieVectorFromMovieList() {
         for (int i = 0; i < movieList_movieVector.size(); i++) {
-            genreList_MovieVector=new ArrayList<>();
-            eraList_MovieVector=new ArrayList<>();
-            idList_MovieVector=new ArrayList<>();
+            genreList_MovieVector = new ArrayList<>();
+            eraList_MovieVector = new ArrayList<>();
+            idList_MovieVector = new ArrayList<>();
             genreList_MovieVector = movieList_movieVector.get(i).getGenreList();
             double[] a = getGenreVector(genreList_MovieVector);
             int year = Integer.parseInt(movieList_movieVector.get(i).getRelease_date().split("-")[0]);
