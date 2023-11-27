@@ -166,9 +166,6 @@ public class MovieActivity extends AppCompatActivity {
                     storeMovieDislikeList();
                     getMovieDislikeVector(false);
                     checkOnList();
-                    Intent intent=new Intent(MovieActivity.this, MainActivity.class);
-                    intent.putExtra("NeedToUpdate", true);
-                    startActivity(intent);
                 } else {
                     String[] temp = dislikeList_movieList.split("_");
                     if (!temp[0].equals("")) {
@@ -179,9 +176,6 @@ public class MovieActivity extends AppCompatActivity {
                     storeMovieDislikeList();
                     getMovieDislikeVector(true);
                     checkOnList();
-                    Intent intent=new Intent(MovieActivity.this, MainActivity.class);
-                    intent.putExtra("NeedToUpdate", true);
-                    startActivity(intent);
                 }
             }
         });
@@ -447,11 +441,17 @@ public class MovieActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "DocumentSnapshot adding with email: " + userEmail);
+                Intent intent=new Intent(MovieActivity.this, MainActivity.class);
+                intent.putExtra("NeedToUpdate", true);
+                startActivity(intent);
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@androidx.annotation.NonNull Exception e) {
                 Log.w(TAG, "Error adding document", e);
+                Intent intent=new Intent(MovieActivity.this, MainActivity.class);
+                intent.putExtra("NeedToUpdate", true);
+                startActivity(intent);
             }
         });
     }
